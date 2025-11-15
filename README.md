@@ -18,12 +18,19 @@ BoxManager est une plateforme SaaS multi-tenant complète destinée à la gestio
 
 ## 🎯 Objectifs Business
 
-### Phase 1 - MVP (Mois 1-4)
-- ✅ Multi-tenancy basique
-- ✅ Gestion 1 site par tenant
-- 🔄 Gestion box (CRUD simple)
-- ⏳ Réservation en ligne simple
-- ⏳ Espace client basique
+### Phase 1 - MVP (Mois 1-4) - EN COURS
+- ✅ Multi-tenancy basique (Spatie)
+- ✅ Base de données complète (9 migrations)
+- ✅ Modèles Eloquent avec relations
+- ✅ Frontend Vue.js 3 + Inertia.js
+- ✅ Gestion Sites (CRUD complet)
+- ✅ Gestion Box (CRUD complet avec calculs auto)
+- ✅ Dashboard avec statistiques
+- ✅ Seeders avec données de test
+- ⏳ Authentification multi-tenant
+- ⏳ Gestion Clients (CRUD)
+- ⏳ Gestion Contrats (CRUD)
+- ⏳ Réservation en ligne
 - ⏳ Paiement CB (Stripe)
 - ⏳ 3 langues : FR, EN, NL
 
@@ -111,31 +118,54 @@ npm install
 ```
 
 4. **Configurer l'environnement**
+
+Le fichier `.env` est déjà créé avec les valeurs par défaut. Modifiez-le selon votre configuration :
+
 ```bash
-cp .env.example .env
+# Générer la clé d'application (déjà fait)
 php artisan key:generate
-```
 
-5. **Configurer la base de données**
-
-Éditer le fichier `.env` :
-```env
+# Configurer la base de données PostgreSQL
 DB_CONNECTION=pgsql
 DB_HOST=127.0.0.1
 DB_PORT=5432
 DB_DATABASE=boxmanager
-DB_USERNAME=your_username
+DB_USERNAME=postgres
 DB_PASSWORD=your_password
 ```
 
-6. **Exécuter les migrations**
+5. **Créer la base de données**
 ```bash
-php artisan migrate
+# PostgreSQL (recommandé)
+createdb boxmanager
+
+# OU MySQL
+mysql -u root -p -e "CREATE DATABASE boxmanager CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 ```
+
+6. **Exécuter les migrations et seeders**
+```bash
+# Créer les tables
+php artisan migrate
+
+# Peupler avec des données de test
+php artisan db:seed
+```
+
+Cela créera :
+- 3 tenants de démonstration
+- 5 sites dans 4 pays européens
+- 100+ boxes de différentes tailles
+- ~15 clients (particuliers et entreprises)
+- ~40 contrats actifs et en attente
 
 7. **Compiler les assets**
 ```bash
+# Mode développement (avec hot reload)
 npm run dev
+
+# OU mode production
+npm run build
 ```
 
 8. **Démarrer le serveur**
@@ -145,11 +175,41 @@ php artisan serve
 
 L'application sera accessible sur `http://localhost:8000`
 
+### 🎯 Accès rapide
+
+Une fois l'installation terminée, vous pouvez explorer :
+- **Dashboard** : http://localhost:8000/dashboard
+- **Sites** : http://localhost:8000/sites
+- **Boxes** : http://localhost:8000/boxes
+
 ## 📚 Documentation
 
-- **[Cahier des spécifications](docs/CAHIER_SPECIFICATIONS.md)** - Spécifications fonctionnelles détaillées
+- **[Cahier des spécifications](docs/CAHIER_SPECIFICATIONS.md)** - Spécifications fonctionnelles complètes (77+ pages)
+- **[Guide d'installation](README_SETUP.md)** - Instructions détaillées d'installation et configuration
+- **[Résumé du projet](PROJECT_SUMMARY.md)** - Vue d'ensemble complète et métriques
 - Architecture technique (À venir)
 - Guide développeur (À venir)
+
+### 📊 Fonctionnalités actuelles
+
+#### Backend
+- ✅ 9 migrations complètes avec contraintes et indexes
+- ✅ 9 modèles Eloquent avec relations bidirectionnelles
+- ✅ Auto-génération des numéros (contrats, factures, codes d'accès)
+- ✅ Auto-calcul volume/surface des boxes
+- ✅ Soft deletes sur toutes les entités
+- ✅ 7 seeders avec données réalistes
+- ✅ 3 controllers REST (Dashboard, Sites, Boxes)
+
+#### Frontend
+- ✅ Configuration Inertia.js + Vue.js 3 + Vite
+- ✅ Layout responsive avec navigation mobile
+- ✅ Dashboard avec 4 KPI et activité récente
+- ✅ CRUD Sites complet (liste, création, édition, suppression)
+- ✅ CRUD Boxes complet avec sélecteurs hiérarchiques
+- ✅ Formulaires avec validation temps réel
+- ✅ Calculs automatiques (volume/surface)
+- ✅ Design moderne Tailwind CSS
 
 ## 🔒 Sécurité
 
@@ -165,14 +225,58 @@ L'application sera accessible sur `http://localhost:8000`
 
 ## 📝 Changelog
 
+### [0.3.0] - 2025-11-15 (Current)
+
+**Ajouté**
+- Formulaires CRUD complets pour Sites (Create/Edit avec validation)
+- Formulaires CRUD complets pour Boxes (Create/Edit avec hiérarchie)
+- Calculs automatiques volume/surface en temps réel
+- Sélecteurs hiérarchiques en cascade (Site → Bâtiment → Étage)
+- Boutons de suppression avec confirmation
+- Documentation complète du projet (PROJECT_SUMMARY.md)
+
+**Amélioré**
+- Design des formulaires avec Tailwind CSS
+- Expérience utilisateur avec états de chargement
+- Validation des formulaires côté client
+- Navigation et breadcrumbs
+
+### [0.2.0] - 2025-11-15
+
+**Ajouté**
+- 7 seeders complets avec données de test réalistes
+- Configuration environnement (.env avec PostgreSQL)
+- Guide d'installation détaillé (README_SETUP.md)
+- Génération automatique de la clé application
+- 3 tenants de démonstration (FR, BE, DE/NL)
+- 100+ boxes avec prix et caractéristiques variés
+
+**Données générées**
+- 5 sites dans 4 pays européens
+- ~10 bâtiments avec étages
+- 100+ boxes (6 tailles: XS à XXL)
+- ~15 clients (particuliers et entreprises)
+- ~40 contrats actifs et en attente
+
 ### [0.1.0] - 2025-11-15
 
 **Ajouté**
 - Structure initiale du projet Laravel 11
 - Configuration multi-tenancy avec Spatie
-- Migrations de base de données (tenants, sites, buildings, floors, boxes)
-- Configuration Inertia.js + Vue.js 3
-- Documentation initiale
+- 9 migrations de base de données complètes
+- 9 modèles Eloquent avec relations
+- Configuration Inertia.js + Vue.js 3 + Vite
+- Layout responsive avec navigation
+- Dashboard avec statistiques
+- Pages Sites et Boxes (Index)
+- 3 controllers (Dashboard, Sites, Boxes)
+- Documentation fonctionnelle (77+ pages)
+
+**Configuration**
+- PostgreSQL comme base de données
+- Tailwind CSS pour le styling
+- Ziggy pour les routes
+- Spatie packages (Multi-tenancy, Permissions, Media)
 
 ## 📄 Licence
 
@@ -180,5 +284,6 @@ Ce projet est propriétaire. Tous droits réservés.
 
 ---
 
-**Version actuelle** : 0.1.0 (MVP en développement)
+**Version actuelle** : 0.3.0 (MVP Phase 1 - 60% complété)
 **Date de dernière mise à jour** : 15 novembre 2025
+**Prochaine étape** : Authentification multi-tenant + Gestion Clients
