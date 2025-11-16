@@ -193,6 +193,34 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Assurances -->
+                    <div class="pt-6 border-t border-gray-200">
+                        <InsuranceSelector
+                            v-model="form.insurance_products"
+                            :insurance-products="insuranceProducts"
+                            :mandatory-insurances="mandatoryInsurances"
+                        />
+                    </div>
+
+                    <!-- Récapitulatif des montants -->
+                    <div v-if="form.monthly_amount > 0" class="pt-6 border-t border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Récapitulatif mensuel</h3>
+                        <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">Loyer du box</span>
+                                <span class="font-medium">{{ formatCurrency(form.monthly_amount) }}</span>
+                            </div>
+                            <div v-if="totalInsurancePremium > 0" class="flex justify-between text-sm">
+                                <span class="text-gray-600">Assurances ({{ form.insurance_products.length }})</span>
+                                <span class="font-medium">{{ formatCurrency(totalInsurancePremium) }}</span>
+                            </div>
+                            <div class="pt-2 border-t border-gray-300 flex justify-between">
+                                <span class="font-semibold text-gray-900">Total mensuel</span>
+                                <span class="text-xl font-bold text-indigo-600">{{ formatCurrency(totalMonthlyAmount) }}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Actions -->
@@ -220,6 +248,7 @@
 import { ref, reactive, computed } from 'vue';
 import { Link, useForm } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import InsuranceSelector from '@/Components/InsuranceSelector.vue';
 
 const props = defineProps({
     customers: {
@@ -229,6 +258,14 @@ const props = defineProps({
     availableBoxes: {
         type: Array,
         required: true,
+    },
+    insuranceProducts: {
+        type: Array,
+        default: () => [],
+    },
+    mandatoryInsurances: {
+        type: Array,
+        default: () => [],
     },
 });
 
@@ -242,6 +279,7 @@ const form = reactive({
     billing_frequency: 'monthly',
     status: 'draft',
     notes: '',
+    insurance_products: [],
 });
 
 const processing = ref(false);
@@ -250,6 +288,19 @@ const errors = ref({});
 const selectedBox = computed(() => {
     if (!form.box_id) return null;
     return props.availableBoxes.find(box => box.id === form.box_id);
+});
+
+const totalInsurancePremium = computed(() => {
+    if (!form.insurance_products || form.insurance_products.length === 0) return 0;
+
+    return form.insurance_products.reduce((total, productId) => {
+        const product = props.insuranceProducts.find(p => p.id === productId);
+        return total + (product ? product.monthly_price : 0);
+    }, 0);
+});
+
+const totalMonthlyAmount = computed(() => {
+    return form.monthly_amount + totalInsurancePremium.value;
 });
 
 const updateMonthlyAmount = () => {

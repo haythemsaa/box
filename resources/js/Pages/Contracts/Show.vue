@@ -144,6 +144,135 @@
                 </div>
             </div>
 
+            <!-- Insurances -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900">Assurances</h3>
+                        <p v-if="contract.total_monthly_with_insurance" class="text-sm text-gray-500 mt-1">
+                            Total mensuel avec assurances:
+                            <span class="font-semibold text-indigo-600">{{ formatCurrency(contract.total_monthly_with_insurance) }}</span>
+                        </p>
+                    </div>
+                    <button
+                        v-if="availableInsuranceProducts && availableInsuranceProducts.length > 0"
+                        @click="showAddInsuranceModal = true"
+                        class="px-4 py-2 bg-indigo-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-indigo-700"
+                    >
+                        Ajouter une assurance
+                    </button>
+                </div>
+                <div v-if="contract.insurances && contract.insurances.length > 0" class="overflow-hidden">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produit</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prime mensuelle</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Couverture</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Depuis</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total payé</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr v-for="insurance in contract.insurances" :key="insurance.id">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    {{ insurance.product_name }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ formatCurrency(insurance.monthly_premium) }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ formatCurrency(insurance.coverage_amount) }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ insurance.start_date }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span :class="getInsuranceStatusClass(insurance.status)" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
+                                        {{ getInsuranceStatusLabel(insurance.status) }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    <div>{{ formatCurrency(insurance.total_premium_paid) }}</div>
+                                    <div class="text-xs text-green-600">Commission: {{ formatCurrency(insurance.total_commission_earned) }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <button
+                                        v-if="insurance.status === 'active'"
+                                        @click="confirmCancelInsurance(insurance)"
+                                        class="text-red-600 hover:text-red-900"
+                                    >
+                                        Annuler
+                                    </button>
+                                    <span v-else class="text-gray-400">-</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div v-else class="p-6 text-center text-sm text-gray-500">
+                    Aucune assurance souscrite pour ce contrat
+                </div>
+            </div>
+
+            <!-- Add Insurance Modal -->
+            <div v-if="showAddInsuranceModal" class="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" @click="showAddInsuranceModal = false"></div>
+                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                    <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                            <div class="sm:flex sm:items-start">
+                                <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                                    <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                                        Ajouter une assurance
+                                    </h3>
+                                    <div class="mt-4">
+                                        <label for="insurance_product_id" class="block text-sm font-medium text-gray-700">
+                                            Produit d'assurance
+                                        </label>
+                                        <select
+                                            id="insurance_product_id"
+                                            v-model="addInsuranceForm.insurance_product_id"
+                                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                        >
+                                            <option value="">Sélectionner un produit</option>
+                                            <option
+                                                v-for="product in availableInsuranceProducts"
+                                                :key="product.id"
+                                                :value="product.id"
+                                            >
+                                                {{ product.name }} - {{ formatCurrency(product.monthly_price) }}/mois
+                                                (Couverture: {{ formatCurrency(product.max_coverage_amount) }})
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                            <button
+                                type="button"
+                                @click="addInsurance"
+                                :disabled="!addInsuranceForm.insurance_product_id || addingInsurance"
+                                class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
+                            >
+                                {{ addingInsurance ? 'Ajout...' : 'Ajouter' }}
+                            </button>
+                            <button
+                                type="button"
+                                @click="showAddInsuranceModal = false"
+                                class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                            >
+                                Annuler
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Invoices -->
             <div class="bg-white rounded-lg shadow">
                 <div class="px-6 py-4 border-b border-gray-200">
@@ -218,14 +347,25 @@
 </template>
 
 <script setup>
-import { Link } from '@inertiajs/vue3';
+import { ref, reactive } from 'vue';
+import { Link, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 
-defineProps({
+const props = defineProps({
     contract: {
         type: Object,
         required: true,
     },
+    availableInsuranceProducts: {
+        type: Array,
+        default: () => [],
+    },
+});
+
+const showAddInsuranceModal = ref(false);
+const addingInsurance = ref(false);
+const addInsuranceForm = reactive({
+    insurance_product_id: '',
 });
 
 const formatCurrency = (amount) => {
@@ -283,5 +423,60 @@ const getPaymentStatusClass = (status) => {
         refunded: 'bg-orange-100 text-orange-800',
     };
     return classes[status] || 'bg-gray-100 text-gray-800';
+};
+
+const getInsuranceStatusClass = (status) => {
+    const classes = {
+        active: 'bg-green-100 text-green-800',
+        pending: 'bg-yellow-100 text-yellow-800',
+        cancelled: 'bg-red-100 text-red-800',
+        expired: 'bg-orange-100 text-orange-800',
+    };
+    return classes[status] || 'bg-gray-100 text-gray-800';
+};
+
+const getInsuranceStatusLabel = (status) => {
+    const labels = {
+        active: 'Actif',
+        pending: 'En attente',
+        cancelled: 'Annulé',
+        expired: 'Expiré',
+    };
+    return labels[status] || status;
+};
+
+const addInsurance = () => {
+    if (!addInsuranceForm.insurance_product_id) return;
+
+    addingInsurance.value = true;
+
+    router.post(
+        `/contracts/${props.contract.id}/insurances`,
+        {
+            insurance_product_id: addInsuranceForm.insurance_product_id,
+        },
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                showAddInsuranceModal.value = false;
+                addInsuranceForm.insurance_product_id = '';
+            },
+            onFinish: () => {
+                addingInsurance.value = false;
+            },
+        }
+    );
+};
+
+const confirmCancelInsurance = (insurance) => {
+    if (confirm(`Êtes-vous sûr de vouloir annuler l'assurance "${insurance.product_name}" ? Cette action est irréversible.`)) {
+        cancelInsurance(insurance);
+    }
+};
+
+const cancelInsurance = (insurance) => {
+    router.delete(`/contracts/${props.contract.id}/insurances/${insurance.id}`, {
+        preserveScroll: true,
+    });
 };
 </script>
