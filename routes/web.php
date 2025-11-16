@@ -23,13 +23,5 @@ Route::resource('boxes', BoxController::class);
 // Customers Management
 Route::resource('customers', CustomerController::class);
 
-// Contracts Management (placeholder for future implementation)
-Route::get('/contracts', function () {
-    return inertia('Contracts/Index', [
-        'contracts' => ['data' => []],
-    ]);
-})->name('contracts.index');
-
-Route::get('/contracts/create', function () {
-    return inertia('Contracts/Create');
-})->name('contracts.create');
+// Contracts Management
+Route::resource('contracts', \App\Http\Controllers\ContractController::class);
