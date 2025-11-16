@@ -31,9 +31,7 @@
                         <h3 class="text-lg font-semibold text-gray-900">Statut du box</h3>
                         <p class="mt-1 text-sm text-gray-500">Disponibilité actuelle</p>
                     </div>
-                    <span :class="getStatusClass(box.status)" class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium">
-                        {{ getStatusLabel(box.status) }}
-                    </span>
+                    <StatusBadge :status="box.status" type="box" size="large" />
                 </div>
             </div>
 
@@ -188,9 +186,7 @@
                                     {{ formatCurrency(contract.monthly_amount) }}/mois
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span :class="getContractStatusClass(contract.status)" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
-                                        {{ getContractStatusLabel(contract.status) }}
-                                    </span>
+                                    <StatusBadge :status="contract.status" type="contract" size="small" />
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <Link :href="`/contracts/${contract.id}`" class="text-indigo-600 hover:text-indigo-900">
@@ -201,9 +197,13 @@
                         </tbody>
                     </table>
                 </div>
-                <div v-else class="p-6 text-center text-sm text-gray-500">
-                    Aucun contrat pour ce box
-                </div>
+                <EmptyState
+                    v-else
+                    icon="document"
+                    title="Aucun contrat"
+                    description="Ce box n'a pas encore été loué."
+                    size="small"
+                />
             </div>
         </div>
     </AppLayout>
@@ -212,6 +212,8 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import StatusBadge from '@/Components/StatusBadge.vue';
+import EmptyState from '@/Components/EmptyState.vue';
 
 defineProps({
     box: {
@@ -229,47 +231,5 @@ const formatCurrency = (amount) => {
 
 const formatDate = (date) => {
     return new Date(date).toLocaleDateString('fr-FR');
-};
-
-const getStatusClass = (status) => {
-    const classes = {
-        available: 'bg-green-100 text-green-800',
-        occupied: 'bg-red-100 text-red-800',
-        maintenance: 'bg-yellow-100 text-yellow-800',
-        reserved: 'bg-blue-100 text-blue-800',
-    };
-    return classes[status] || 'bg-gray-100 text-gray-800';
-};
-
-const getStatusLabel = (status) => {
-    const labels = {
-        available: 'Disponible',
-        occupied: 'Occupé',
-        maintenance: 'Maintenance',
-        reserved: 'Réservé',
-    };
-    return labels[status] || status;
-};
-
-const getContractStatusClass = (status) => {
-    const classes = {
-        draft: 'bg-gray-100 text-gray-800',
-        pending: 'bg-yellow-100 text-yellow-800',
-        active: 'bg-green-100 text-green-800',
-        expired: 'bg-orange-100 text-orange-800',
-        cancelled: 'bg-red-100 text-red-800',
-    };
-    return classes[status] || 'bg-gray-100 text-gray-800';
-};
-
-const getContractStatusLabel = (status) => {
-    const labels = {
-        draft: 'Brouillon',
-        pending: 'En attente',
-        active: 'Actif',
-        expired: 'Expiré',
-        cancelled: 'Annulé',
-    };
-    return labels[status] || status;
 };
 </script>

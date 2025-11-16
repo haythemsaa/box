@@ -103,9 +103,7 @@
 
                             <!-- Status -->
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span :class="getStatusClass(contract.status)" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
-                                    {{ getStatusLabel(contract.status) }}
-                                </span>
+                                <StatusBadge :status="contract.status" type="contract" size="small" />
                             </td>
 
                             <!-- Actions -->
@@ -140,21 +138,14 @@
             </div>
 
             <!-- Empty State -->
-            <div v-else class="text-center py-12">
-                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <h3 class="mt-2 text-sm font-medium text-gray-900">Aucun contrat</h3>
-                <p class="mt-1 text-sm text-gray-500">Commencez par créer votre premier contrat.</p>
-                <div class="mt-6">
-                    <Link href="/contracts/create" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                        </svg>
-                        Créer un contrat
-                    </Link>
-                </div>
-            </div>
+            <EmptyState
+                v-else
+                icon="document"
+                title="Aucun contrat"
+                description="Commencez par créer votre premier contrat."
+                action-text="Créer un contrat"
+                action-href="/contracts/create"
+            />
         </div>
     </AppLayout>
 </template>
@@ -163,6 +154,8 @@
 import { ref } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import StatusBadge from '@/Components/StatusBadge.vue';
+import EmptyState from '@/Components/EmptyState.vue';
 
 const props = defineProps({
     contracts: {
@@ -193,27 +186,5 @@ const formatCurrency = (amount) => {
         style: 'currency',
         currency: 'EUR',
     }).format(amount);
-};
-
-const getStatusClass = (status) => {
-    const classes = {
-        draft: 'bg-gray-100 text-gray-800',
-        pending: 'bg-yellow-100 text-yellow-800',
-        active: 'bg-green-100 text-green-800',
-        expired: 'bg-orange-100 text-orange-800',
-        cancelled: 'bg-red-100 text-red-800',
-    };
-    return classes[status] || 'bg-gray-100 text-gray-800';
-};
-
-const getStatusLabel = (status) => {
-    const labels = {
-        draft: 'Brouillon',
-        pending: 'En attente',
-        active: 'Actif',
-        expired: 'Expiré',
-        cancelled: 'Annulé',
-    };
-    return labels[status] || status;
 };
 </script>
