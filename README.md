@@ -42,6 +42,7 @@ BoxManager est une plateforme SaaS multi-tenant complète destinée à la gestio
 - ✅ **Module Assurance** (5 produits avec commissions 20-40%)
 - ✅ **Facturation récurrente automatique** (mensuelle, trimestrielle, annuelle)
 - ✅ **Analytics assurance** (performance tracking + export CSV)
+- ✅ **Intégration assurance dans contrats** (backend complet: sélection, gestion, historique)
 
 ### Phase 2 - Fonctionnalités avancées (Mois 5-8)
 - Multi-sites illimités
@@ -456,7 +457,64 @@ Puis ajouter dans le crontab système :
 
 ## 📝 Changelog
 
-### [0.11.0] - 2025-11-16 (Current) 🎉 INSURANCE & BILLING AUTOMATION
+### [0.12.0] - 2025-11-16 (Current) 🎉 CONTRACT INSURANCE INTEGRATION
+
+**🔗 Intégration Assurance dans Workflow Contrats** ⭐ BACKEND COMPLET
+- ContractController étendu avec gestion assurance:
+  - create(): Charge produits d'assurance (actifs + obligatoires) pour sélection
+  - store(): Crée souscriptions ContractInsurance en transaction DB
+    - Stockage prix historiques (monthly_premium, commission_amount)
+    - Support assurances obligatoires auto-sélectionnées
+    - Calcul commission automatique (20-40%)
+    - Status synchronisé avec contrat (pending/active)
+  - show(): Affiche assurances actives avec totaux calculés
+    - Total mensuel incluant assurances
+    - Historique primes payées par assurance
+    - Commissions gagnées trackées
+  - addInsurance(): Ajoute assurance à contrat existant
+    - Validation: pas de doublon actif
+    - Protection: vérification contrat/produit existent
+    - Date début: immédiate (now())
+  - cancelInsurance(): Annule assurance active
+    - Sécurité: vérification ownership contrat
+    - Appel méthode cancel() du modèle
+- Contract model: Ajout relation contractInsurances()
+  - HasMany vers ContractInsurance
+  - Eager loading dans show() pour performance
+- Routes insurance management:
+  - POST /contracts/{contract}/insurances (ajout)
+  - DELETE /contracts/{contract}/insurances/{contractInsurance} (annulation)
+- Protection métier:
+  - Empêche doublon assurance sur même contrat
+  - Vérifie ownership avant annulation
+  - Transaction DB pour atomicité (contrat + assurances)
+
+**💡 Business Logic Patterns**
+- Historical Pricing: Prix stocké au moment souscription (pas référence produit)
+- Commission Snapshot: Taux commission figé lors souscription
+- Cascade Status: Statut assurance suit statut contrat
+- Mandatory Auto-Selection: Frontend recevra liste produits obligatoires
+- Duplicate Prevention: Check before insert pour produit déjà actif
+
+**🚧 Travaux Restants (Frontend)**
+- [ ] Modifier Contracts/Create.vue pour sélection assurances
+- [ ] Modifier Contracts/Show.vue pour affichage et gestion
+- [ ] Créer composant InsuranceSelector.vue réutilisable
+- [ ] Tests complets workflow end-to-end
+
+**📊 Impact Statistiques**
+- Backend 100% complet pour intégration assurance
+- +2 routes API (/contracts/{contract}/insurances)
+- +2 méthodes controller (addInsurance, cancelInsurance)
+- +1 relation model (contractInsurances)
+
+**🎯 Différenciateur Concurrentiel**
+- ✅ Assurance intégrée nativement dans workflow contrat
+- ✅ Revenus additionnels automatiques (20-40% commission)
+- ✅ Protection business rules (pas de doublon, ownership)
+- ✅ Historical pricing pour stabilité financière
+
+### [0.11.0] - 2025-11-16 🎉 INSURANCE & BILLING AUTOMATION
 
 **🛡️ Module Assurance Frontend Complet** ⭐ REVENUS RÉCURRENTS
 - Controller InsuranceProductController (full CRUD + analytics):
@@ -1000,6 +1058,6 @@ Ce projet est propriétaire. Tous droits réservés.
 
 ---
 
-**Version actuelle** : 0.11.0 (Insurance & Billing Automation) 🎉✅
+**Version actuelle** : 0.12.0 (Contract Insurance Integration) 🎉✅
 **Date de dernière mise à jour** : 16 novembre 2025
-**Prochaines étapes** : Intégration assurance dans contrats + SEPA + Signature électronique
+**Prochaines étapes** : Frontend assurance contrats + SEPA + Signature électronique
