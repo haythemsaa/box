@@ -33,9 +33,12 @@
                     </div>
 
                     <!-- Right Side -->
-                    <div class="hidden sm:flex sm:items-center sm:ml-6">
+                    <div class="hidden sm:flex sm:items-center sm:ml-6 space-x-3">
+                        <!-- Language Selector -->
+                        <LanguageSelector />
+
                         <!-- Tenant Info -->
-                        <div class="ml-3 relative" v-if="$page.props.auth.tenant">
+                        <div class="relative" v-if="$page.props.auth.tenant">
                             <div class="flex items-center text-sm text-gray-700">
                                 <span class="font-medium">{{ $page.props.auth.tenant.name }}</span>
                                 <span class="ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-indigo-100 text-indigo-800">
@@ -45,7 +48,7 @@
                         </div>
 
                         <!-- User Dropdown -->
-                        <div class="ml-3 relative" v-if="$page.props.auth.user">
+                        <div class="relative" v-if="$page.props.auth.user">
                             <div class="flex items-center text-sm text-gray-700">
                                 <span>{{ $page.props.auth.user.name }}</span>
                             </div>
@@ -107,6 +110,7 @@ import { ref } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+import LanguageSelector from '@/Components/LanguageSelector.vue';
 
 const showingNavigationDropdown = ref(false);
 </script>

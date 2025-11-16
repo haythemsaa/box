@@ -1,27 +1,27 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\SiteController;
-use App\Http\Controllers\BoxController;
-use App\Http\Controllers\CustomerController;
+use Inertia\Inertia;
 
-// Redirect root to dashboard
 Route::get('/', function () {
-    return redirect('/dashboard');
+    return Inertia::render('Welcome', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
+    ]);
 });
 
-// Dashboard
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/dashboard', function () {
+    return Inertia::render('Dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-// Sites Management
-Route::resource('sites', SiteController::class);
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
-// Boxes Management
-Route::resource('boxes', BoxController::class);
-
-// Customers Management
-Route::resource('customers', CustomerController::class);
-
-// Contracts Management
-Route::resource('contracts', \App\Http\Controllers\ContractController::class);
+require __DIR__.'/auth.php';

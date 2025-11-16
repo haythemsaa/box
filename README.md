@@ -20,7 +20,7 @@ BoxManager est une plateforme SaaS multi-tenant complète destinée à la gestio
 
 ### Phase 1 - MVP (Mois 1-4) - EN COURS
 - ✅ Multi-tenancy basique (Spatie)
-- ✅ Base de données complète (9 migrations)
+- ✅ Base de données complète (9 migrations + users)
 - ✅ Modèles Eloquent avec relations
 - ✅ Frontend Vue.js 3 + Inertia.js
 - ✅ Gestion Sites (CRUD complet)
@@ -28,11 +28,11 @@ BoxManager est une plateforme SaaS multi-tenant complète destinée à la gestio
 - ✅ Gestion Clients (CRUD complet avec types dynamiques)
 - ✅ Gestion Contrats (CRUD complet avec workflow)
 - ✅ Dashboard avec statistiques
-- ✅ Seeders avec données de test
-- ⏳ Authentification multi-tenant
+- ✅ Seeders avec données de test (+ UserSeeder)
+- ✅ Authentification multi-tenant (Laravel Breeze + Inertia)
+- ✅ Support multi-langue (FR, EN, NL avec vue-i18n)
 - ⏳ Réservation en ligne
 - ⏳ Paiement CB (Stripe)
-- ⏳ 3 langues : FR, EN, NL
 
 ### Phase 2 - Fonctionnalités avancées (Mois 5-8)
 - Multi-sites illimités
@@ -193,14 +193,16 @@ Une fois l'installation terminée, vous pouvez explorer :
 ### 📊 Fonctionnalités actuelles
 
 #### Backend
-- ✅ 9 migrations complètes avec contraintes et indexes
-- ✅ 9 modèles Eloquent avec relations bidirectionnelles
+- ✅ 10 migrations complètes avec contraintes et indexes (dont users multi-tenant)
+- ✅ 10 modèles Eloquent avec relations bidirectionnelles (+ User)
 - ✅ Auto-génération des numéros (contrats, factures, codes d'accès)
 - ✅ Auto-calcul volume/surface des boxes
 - ✅ Soft deletes sur toutes les entités
-- ✅ 7 seeders avec données réalistes
+- ✅ 8 seeders avec données réalistes (+ UserSeeder)
 - ✅ 5 controllers REST (Dashboard, Sites, Boxes, Customers, Contracts)
 - ✅ Workflow automatique de statut des boxes selon contrats
+- ✅ Laravel Breeze avec Inertia pour authentification
+- ✅ Modèle User adapté pour multi-tenancy avec rôles
 
 #### Frontend
 - ✅ Configuration Inertia.js + Vue.js 3 + Vite
@@ -210,13 +212,19 @@ Une fois l'installation terminée, vous pouvez explorer :
 - ✅ CRUD Boxes complet (Index, Create, Edit, Show)
 - ✅ CRUD Customers complet (Index, Create, Edit, Show)
 - ✅ CRUD Contracts complet (Index, Create, Edit, Show)
+- ✅ Pages d'authentification Breeze (Login, Register, etc.)
 - ✅ Pages Show détaillées avec relations et statistiques
 - ✅ Sélecteurs hiérarchiques en cascade pour Boxes
 - ✅ Formulaires dynamiques selon type de client
 - ✅ Recherche et filtres avancés sur toutes les entités
 - ✅ Formulaires avec validation temps réel
 - ✅ Calculs automatiques (volume/surface)
-- ✅ 17 pages Vue.js complètes et fonctionnelles
+- ✅ Support multi-langue complet (FR, EN, NL)
+  - vue-i18n configuré et intégré
+  - Sélecteur de langue dans la navigation
+  - 3 fichiers de traduction complets (~180 clés chacun)
+  - Stockage de la préférence utilisateur
+- ✅ 23+ pages Vue.js complètes et fonctionnelles
 - ✅ Design moderne et cohérent avec Tailwind CSS
 
 ## 🔒 Sécurité
@@ -233,7 +241,34 @@ Une fois l'installation terminée, vous pouvez explorer :
 
 ## 📝 Changelog
 
-### [0.6.0] - 2025-11-16 (Current)
+### [0.7.0] - 2025-11-16 (Current)
+
+**Ajouté**
+- Authentification multi-tenant avec Laravel Breeze
+  - Migration users adaptée pour multi-tenancy (tenant_id, role, is_active)
+  - Modèle User avec relations tenant et scopes
+  - UserSeeder créant 1 super admin + admin/manager/employees par tenant
+  - Pages d'authentification (Login, Register, Password Reset, etc.)
+  - Rôles utilisateur (super_admin, admin, manager, employee)
+- Support multi-langue complet (FR, EN, NL)
+  - Installation et configuration de vue-i18n@9
+  - 3 fichiers de traduction complets (~180 clés chacun)
+  - Sélecteur de langue dans la navigation avec drapeaux
+  - Détection automatique de la langue du navigateur
+  - Stockage de la préférence dans localStorage
+  - Traductions pour toutes les pages et composants
+
+**Amélioré**
+- app.js configuré avec i18n global
+- Navigation enrichie avec sélecteur de langue
+- Architecture prête pour l'internationalisation
+
+**Technique**
+- Assets compilés: 328.70 KB (114.06 KB gzipped)
+- 819 modules transformés
+- +5 packages npm (vue-i18n + dépendances)
+
+### [0.6.0] - 2025-11-16
 
 **Ajouté**
 - Pages Show détaillées pour toutes les entités
