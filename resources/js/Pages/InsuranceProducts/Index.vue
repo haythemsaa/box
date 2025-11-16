@@ -190,31 +190,14 @@
                     </table>
 
                     <!-- Empty State -->
-                    <div v-if="insuranceProducts.data.length === 0" class="text-center py-12">
-                        <svg
-                            class="mx-auto h-12 w-12 text-gray-400"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                            />
-                        </svg>
-                        <h3 class="mt-2 text-sm font-medium text-gray-900">Aucun produit d'assurance</h3>
-                        <p class="mt-1 text-sm text-gray-500">Commencez par créer un nouveau produit.</p>
-                        <div class="mt-6">
-                            <Link
-                                :href="route('insurance-products.create')"
-                                class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700"
-                            >
-                                + Nouveau Produit
-                            </Link>
-                        </div>
-                    </div>
+                    <EmptyState
+                        v-if="insuranceProducts.data.length === 0"
+                        icon="shield"
+                        title="Aucun produit d'assurance"
+                        description="Commencez par créer un nouveau produit."
+                        action-text="+ Nouveau Produit"
+                        :action-href="route('insurance-products.create')"
+                    />
 
                     <!-- Pagination -->
                     <div v-if="insuranceProducts.data.length > 0" class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
@@ -277,6 +260,7 @@
 import { ref, reactive } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import EmptyState from '@/Components/EmptyState.vue';
 
 const props = defineProps({
     insuranceProducts: Object,

@@ -88,9 +88,7 @@
 
                             <!-- Type -->
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span :class="getTypeClass(customer.type)" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
-                                    {{ getTypeLabel(customer.type) }}
-                                </span>
+                                <StatusBadge :status="customer.type" type="customer_type" />
                             </td>
 
                             <!-- Contact -->
@@ -114,9 +112,7 @@
 
                             <!-- Status -->
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span :class="getStatusClass(customer.status)" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
-                                    {{ getStatusLabel(customer.status) }}
-                                </span>
+                                <StatusBadge :status="customer.status" type="customer" />
                             </td>
 
                             <!-- Actions -->
@@ -151,21 +147,14 @@
             </div>
 
             <!-- Empty State -->
-            <div v-else class="text-center py-12">
-                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-                <h3 class="mt-2 text-sm font-medium text-gray-900">Aucun client</h3>
-                <p class="mt-1 text-sm text-gray-500">Commencez par créer votre premier client.</p>
-                <div class="mt-6">
-                    <Link href="/customers/create" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                        </svg>
-                        Créer un client
-                    </Link>
-                </div>
-            </div>
+            <EmptyState
+                v-else
+                icon="users"
+                title="Aucun client"
+                description="Commencez par créer votre premier client."
+                action-text="Créer un client"
+                action-href="/customers/create"
+            />
         </div>
     </AppLayout>
 </template>
@@ -174,6 +163,8 @@
 import { ref } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import StatusBadge from '@/Components/StatusBadge.vue';
+import EmptyState from '@/Components/EmptyState.vue';
 
 const props = defineProps({
     customers: {
@@ -199,31 +190,5 @@ const applyFilters = () => {
         preserveState: true,
         preserveScroll: true,
     });
-};
-
-const getTypeClass = (type) => {
-    return type === 'company' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800';
-};
-
-const getTypeLabel = (type) => {
-    return type === 'company' ? 'Entreprise' : 'Particulier';
-};
-
-const getStatusClass = (status) => {
-    const classes = {
-        active: 'bg-green-100 text-green-800',
-        inactive: 'bg-gray-100 text-gray-800',
-        suspended: 'bg-red-100 text-red-800',
-    };
-    return classes[status] || 'bg-gray-100 text-gray-800';
-};
-
-const getStatusLabel = (status) => {
-    const labels = {
-        active: 'Actif',
-        inactive: 'Inactif',
-        suspended: 'Suspendu',
-    };
-    return labels[status] || status;
 };
 </script>

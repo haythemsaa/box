@@ -32,9 +32,7 @@
                                 <h3 class="text-lg font-semibold text-gray-900">{{ site.name }}</h3>
                                 <p class="text-sm text-gray-600 mt-1">{{ site.code }}</p>
                             </div>
-                            <span :class="getStatusClass(site.status)" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
-                                {{ getStatusLabel(site.status) }}
-                            </span>
+                            <StatusBadge :status="site.status" type="site" />
                         </div>
 
                         <!-- Address -->
@@ -79,21 +77,14 @@
             </div>
 
             <!-- Empty State -->
-            <div v-else class="text-center py-12">
-                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
-                <h3 class="mt-2 text-sm font-medium text-gray-900">Aucun site</h3>
-                <p class="mt-1 text-sm text-gray-500">Commencez par créer votre premier site de stockage.</p>
-                <div class="mt-6">
-                    <Link href="/sites/create" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 transition duration-150">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                        </svg>
-                        Créer un site
-                    </Link>
-                </div>
-            </div>
+            <EmptyState
+                v-else
+                icon="building"
+                title="Aucun site"
+                description="Commencez par créer votre premier site de stockage."
+                action-text="Créer un site"
+                action-href="/sites/create"
+            />
 
             <!-- Pagination -->
             <div v-if="sites.data.length > 0 && (sites.prev_page_url || sites.next_page_url)" class="px-6 py-4 border-t border-gray-200 bg-gray-50">
@@ -118,6 +109,8 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import StatusBadge from '@/Components/StatusBadge.vue';
+import EmptyState from '@/Components/EmptyState.vue';
 
 const props = defineProps({
     sites: {
@@ -125,22 +118,4 @@ const props = defineProps({
         required: true,
     },
 });
-
-const getStatusClass = (status) => {
-    const classes = {
-        active: 'bg-green-100 text-green-800',
-        inactive: 'bg-gray-100 text-gray-800',
-        maintenance: 'bg-yellow-100 text-yellow-800',
-    };
-    return classes[status] || 'bg-gray-100 text-gray-800';
-};
-
-const getStatusLabel = (status) => {
-    const labels = {
-        active: 'Actif',
-        inactive: 'Inactif',
-        maintenance: 'Maintenance',
-    };
-    return labels[status] || status;
-};
 </script>

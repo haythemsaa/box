@@ -9,7 +9,7 @@ const props = defineProps({
     type: {
         type: String,
         default: 'default',
-        validator: (value) => ['default', 'contract', 'payment', 'sepa', 'signature', 'insurance'].includes(value)
+        validator: (value) => ['default', 'contract', 'payment', 'sepa', 'signature', 'insurance', 'customer', 'customer_type', 'site', 'box'].includes(value)
     },
     size: {
         type: String,
@@ -65,6 +65,26 @@ const statusConfigs = {
         cancelled: { color: 'bg-red-100 text-red-800', label: 'Annulé', icon: '✗' },
         suspended: { color: 'bg-orange-100 text-orange-800', label: 'Suspendu', icon: '⏸' },
         expired: { color: 'bg-gray-100 text-gray-800', label: 'Expiré', icon: '⊘' }
+    },
+    customer: {
+        active: { color: 'bg-green-100 text-green-800', label: 'Actif', icon: '✓' },
+        inactive: { color: 'bg-gray-100 text-gray-800', label: 'Inactif', icon: '○' },
+        suspended: { color: 'bg-red-100 text-red-800', label: 'Suspendu', icon: '⏸' }
+    },
+    customer_type: {
+        individual: { color: 'bg-blue-100 text-blue-800', label: 'Particulier', icon: '👤' },
+        company: { color: 'bg-purple-100 text-purple-800', label: 'Entreprise', icon: '🏢' }
+    },
+    site: {
+        active: { color: 'bg-green-100 text-green-800', label: 'Actif', icon: '✓' },
+        inactive: { color: 'bg-gray-100 text-gray-800', label: 'Inactif', icon: '○' },
+        maintenance: { color: 'bg-yellow-100 text-yellow-800', label: 'Maintenance', icon: '🔧' }
+    },
+    box: {
+        available: { color: 'bg-green-500 text-white', label: 'Disponible', icon: '✓' },
+        occupied: { color: 'bg-red-500 text-white', label: 'Occupée', icon: '●' },
+        reserved: { color: 'bg-yellow-500 text-white', label: 'Réservée', icon: '⏳' },
+        maintenance: { color: 'bg-gray-500 text-white', label: 'Maintenance', icon: '🔧' }
     }
 };
 

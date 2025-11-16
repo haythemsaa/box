@@ -59,9 +59,7 @@
                     <div class="bg-gradient-to-br from-indigo-500 to-purple-600 p-4 text-white">
                         <div class="flex justify-between items-start mb-2">
                             <h3 class="text-lg font-bold">{{ box.number }}</h3>
-                            <span :class="getStatusBadgeClass(box.status)" class="px-2 py-1 rounded-full text-xs font-medium">
-                                {{ getStatusLabel(box.status) }}
-                            </span>
+                            <StatusBadge :status="box.status" type="box" size="small" />
                         </div>
                         <p class="text-sm opacity-90">{{ box.site_name }}</p>
                         <p class="text-xs opacity-75">{{ box.floor_label }}</p>
@@ -136,21 +134,14 @@
             </div>
 
             <!-- Empty State -->
-            <div v-else class="text-center py-12">
-                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                </svg>
-                <h3 class="mt-2 text-sm font-medium text-gray-900">Aucune box</h3>
-                <p class="mt-1 text-sm text-gray-500">Commencez par créer votre première box de stockage.</p>
-                <div class="mt-6">
-                    <Link href="/boxes/create" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 transition duration-150">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                        </svg>
-                        Créer une box
-                    </Link>
-                </div>
-            </div>
+            <EmptyState
+                v-else
+                icon="box"
+                title="Aucune box"
+                description="Commencez par créer votre première box de stockage."
+                action-text="Créer une box"
+                action-href="/boxes/create"
+            />
 
             <!-- Pagination -->
             <div v-if="boxes.data.length > 0 && (boxes.prev_page_url || boxes.next_page_url)" class="px-6 py-4 border-t border-gray-200 bg-gray-50">
@@ -175,6 +166,8 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import StatusBadge from '@/Components/StatusBadge.vue';
+import EmptyState from '@/Components/EmptyState.vue';
 
 const props = defineProps({
     boxes: {
@@ -188,24 +181,4 @@ const props = defineProps({
         }),
     },
 });
-
-const getStatusBadgeClass = (status) => {
-    const classes = {
-        available: 'bg-green-500 text-white',
-        occupied: 'bg-red-500 text-white',
-        reserved: 'bg-yellow-500 text-white',
-        maintenance: 'bg-gray-500 text-white',
-    };
-    return classes[status] || 'bg-gray-500 text-white';
-};
-
-const getStatusLabel = (status) => {
-    const labels = {
-        available: 'Disponible',
-        occupied: 'Occupée',
-        reserved: 'Réservée',
-        maintenance: 'Maintenance',
-    };
-    return labels[status] || status;
-};
 </script>
