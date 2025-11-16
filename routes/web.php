@@ -9,6 +9,7 @@ use App\Http\Controllers\ContractController;
 use App\Http\Controllers\ClientPortalController;
 use App\Http\Controllers\StripePaymentController;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\InsuranceProductController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -60,6 +61,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Contracts Management
     Route::resource('contracts', ContractController::class);
+
+    // Insurance Products Management
+    Route::resource('insurance-products', InsuranceProductController::class);
+    Route::get('/api/insurance-products/active', [InsuranceProductController::class, 'getActive'])->name('insurance-products.active');
 
     // Reservations Management (Admin)
     Route::prefix('admin/reservations')->name('admin.reservations.')->group(function () {

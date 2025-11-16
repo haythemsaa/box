@@ -29,6 +29,9 @@
                             <NavLink href="/contracts" :active="$page.url.startsWith('/contracts')">
                                 Contrats
                             </NavLink>
+                            <NavLink href="/insurance-products" :active="$page.url.startsWith('/insurance-products')">
+                                Assurances
+                            </NavLink>
                         </div>
                     </div>
 
@@ -84,6 +87,9 @@
                     </ResponsiveNavLink>
                     <ResponsiveNavLink href="/contracts" :active="$page.url.startsWith('/contracts')">
                         Contrats
+                    </ResponsiveNavLink>
+                    <ResponsiveNavLink href="/insurance-products" :active="$page.url.startsWith('/insurance-products')">
+                        Assurances
                     </ResponsiveNavLink>
                 </div>
             </div>
