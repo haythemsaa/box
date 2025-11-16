@@ -181,5 +181,22 @@
     "DE": "Duitsland",
     "ES": "Spanje",
     "IT": "Italië"
+  },
+  "clientPortal": {
+    "clientPortal": "Klantportaal",
+    "welcome": "Welkom",
+    "totalContracts": "Totaal Contracten",
+    "activeContracts": "Actieve Contracten",
+    "monthlyTotal": "Maandelijks Totaal",
+    "unpaidInvoices": "Onbetaalde Facturen",
+    "myBoxes": "Mijn Boxen",
+    "noActiveContracts": "Geen actieve contracten",
+    "recentInvoices": "Recente Facturen",
+    "recentPayments": "Recente Betalingen",
+    "invoices": "Facturen",
+    "payments": "Betalingen",
+    "paid": "Betaald",
+    "unpaid": "Onbetaald",
+    "overdue": "Achterstallig"
   }
 }

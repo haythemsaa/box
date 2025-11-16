@@ -181,5 +181,22 @@
     "DE": "Allemagne",
     "ES": "Espagne",
     "IT": "Italie"
+  },
+  "clientPortal": {
+    "clientPortal": "Portail Client",
+    "welcome": "Bienvenue",
+    "totalContracts": "Contrats totaux",
+    "activeContracts": "Contrats actifs",
+    "monthlyTotal": "Total mensuel",
+    "unpaidInvoices": "Factures impayées",
+    "myBoxes": "Mes Boxes",
+    "noActiveContracts": "Aucun contrat actif",
+    "recentInvoices": "Factures récentes",
+    "recentPayments": "Paiements récents",
+    "invoices": "Factures",
+    "payments": "Paiements",
+    "paid": "Payé",
+    "unpaid": "Impayé",
+    "overdue": "En retard"
   }
 }
