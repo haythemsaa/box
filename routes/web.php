@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\BoxController;
+use App\Http\Controllers\CustomerController;
 
 // Redirect root to dashboard
 Route::get('/', function () {
@@ -19,16 +20,8 @@ Route::resource('sites', SiteController::class);
 // Boxes Management
 Route::resource('boxes', BoxController::class);
 
-// Customers Management (placeholder for future implementation)
-Route::get('/customers', function () {
-    return inertia('Customers/Index', [
-        'customers' => ['data' => []],
-    ]);
-})->name('customers.index');
-
-Route::get('/customers/create', function () {
-    return inertia('Customers/Create');
-})->name('customers.create');
+// Customers Management
+Route::resource('customers', CustomerController::class);
 
 // Contracts Management (placeholder for future implementation)
 Route::get('/contracts', function () {
