@@ -204,17 +204,20 @@ Une fois l'installation terminée, vous pouvez explorer :
 
 #### Frontend
 - ✅ Configuration Inertia.js + Vue.js 3 + Vite
-- ✅ Layout responsive avec navigation mobile
+- ✅ Layout responsive avec navigation mobile complète
 - ✅ Dashboard avec 4 KPI et activité récente
-- ✅ CRUD Sites complet (liste, création, édition, suppression)
-- ✅ CRUD Boxes complet avec sélecteurs hiérarchiques
-- ✅ CRUD Customers complet avec formulaires dynamiques (particulier/entreprise)
-- ✅ CRUD Contracts complet avec sélection client/box et gestion workflow
+- ✅ CRUD Sites complet (Index, Create, Edit, Show)
+- ✅ CRUD Boxes complet (Index, Create, Edit, Show)
+- ✅ CRUD Customers complet (Index, Create, Edit, Show)
+- ✅ CRUD Contracts complet (Index, Create, Edit, Show)
+- ✅ Pages Show détaillées avec relations et statistiques
+- ✅ Sélecteurs hiérarchiques en cascade pour Boxes
+- ✅ Formulaires dynamiques selon type de client
 - ✅ Recherche et filtres avancés sur toutes les entités
 - ✅ Formulaires avec validation temps réel
 - ✅ Calculs automatiques (volume/surface)
-- ✅ 14 pages Vue.js complètes et fonctionnelles
-- ✅ Design moderne Tailwind CSS
+- ✅ 17 pages Vue.js complètes et fonctionnelles
+- ✅ Design moderne et cohérent avec Tailwind CSS
 
 ## 🔒 Sécurité
 
@@ -230,7 +233,26 @@ Une fois l'installation terminée, vous pouvez explorer :
 
 ## 📝 Changelog
 
-### [0.5.0] - 2025-11-16 (Current)
+### [0.6.0] - 2025-11-16 (Current)
+
+**Ajouté**
+- Pages Show détaillées pour toutes les entités
+  - Customers/Show.vue avec informations client et liste des contrats
+  - Boxes/Show.vue avec caractéristiques, équipements et localisation
+  - Sites/Show.vue avec vue d'ensemble, statistiques et grille de boxes
+- Navigation mobile complète avec tous les liens
+- Affichage visuel des équipements des boxes (électricité, éclairage, climatisation)
+- Grille interactive des boxes par site avec codes couleur de statut
+- Statistiques en temps réel sur les pages Show (nombre de boxes, disponibilité)
+- Liens croisés entre entités pour navigation fluide
+
+**Amélioré**
+- Navigation avec liens Clients et Contrats dans menu mobile
+- Affichage des relations entre entités (contrats ↔ clients ↔ boxes)
+- Design cohérent avec badges de statut colorés
+- Formatage des dates et montants selon locale FR
+
+### [0.5.0] - 2025-11-16
 
 **Ajouté**
 - Gestion complète des Contrats (CRUD)
@@ -335,6 +357,6 @@ Ce projet est propriétaire. Tous droits réservés.
 
 ---
 
-**Version actuelle** : 0.5.0 (MVP Phase 1 - 85% complété)
+**Version actuelle** : 0.6.0 (MVP Phase 1 - 90% complété)
 **Date de dernière mise à jour** : 16 novembre 2025
-**Prochaine étape** : Authentification multi-tenant + Réservation en ligne
+**Prochaine étape** : Authentification multi-tenant + Réservation en ligne + Multi-langue
