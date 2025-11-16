@@ -20,24 +20,26 @@ BoxManager est une plateforme SaaS multi-tenant complète destinée à la gestio
 
 ### Phase 1 - MVP (Mois 1-4) - 100% COMPLÉTÉ ✅🎉
 - ✅ Multi-tenancy basique (Spatie)
-- ✅ Base de données complète (16 migrations + users + currencies + vat_rates + reservations)
-- ✅ Modèles Eloquent avec relations (13 modèles)
+- ✅ Base de données complète (20 migrations + users + currencies + vat_rates + reservations + insurances)
+- ✅ Modèles Eloquent avec relations (15 modèles)
 - ✅ Frontend Vue.js 3 + Inertia.js
 - ✅ Gestion Sites (CRUD complet)
 - ✅ Gestion Boxes (CRUD complet avec calculs auto)
 - ✅ Gestion Clients (CRUD complet avec types dynamiques)
 - ✅ Gestion Contrats (CRUD complet avec workflow)
 - ✅ Dashboard Admin avec statistiques
-- ✅ **Portail Client** (dashboard, contrats, factures, paiements)
-- ✅ Seeders avec données de test (10 seeders)
+- ✅ **Portail Client** (dashboard, contrats, factures, paiements, PDF)
+- ✅ Seeders avec données de test (11 seeders)
 - ✅ Authentification multi-tenant (Laravel Breeze + Inertia)
 - ✅ Support multi-langue (FR, EN, NL avec vue-i18n)
-- ✅ **Système de notifications email automatisées** (5 types de notifications)
+- ✅ **Système de notifications email automatisées** (8 types de notifications)
 - ✅ **Rappels de paiement automatiques** (J-7, J-3, J+1, J+3, J+7)
 - ✅ **Multi-devises** (6 devises européennes avec conversions)
 - ✅ **TVA multi-pays** (18 pays européens avec calculs automatiques)
 - ✅ **Réservation en ligne** (système complet avec workflow de conversion)
 - ✅ **Paiement CB Stripe** (checkout sécurisé + webhooks + gestion complète)
+- ✅ **Génération PDF** (factures et contrats professionnels)
+- ✅ **Module Assurance** (5 produits avec commissions 20-40%)
 
 ### Phase 2 - Fonctionnalités avancées (Mois 5-8)
 - Multi-sites illimités
@@ -195,33 +197,112 @@ Une fois l'installation terminée, vous pouvez explorer :
 - Architecture technique (À venir)
 - Guide développeur (À venir)
 
+## ⚙️ Commandes Artisan
+
+BoxManager inclut plusieurs commandes Artisan pour automatiser les tâches récurrentes. Ces commandes peuvent être planifiées via le CRON ou exécutées manuellement.
+
+### 📧 Rappels de paiement
+```bash
+php artisan payments:send-reminders
+```
+Envoie des rappels automatiques pour les factures impayées selon le planning :
+- **J-7** : Rappel préventif (7 jours avant échéance)
+- **J-3** : Rappel urgent (3 jours avant échéance)
+- **J+1** : Premier relance (1 jour après échéance)
+- **J+3** : Deuxième relance (3 jours après échéance)
+- **J+7** : Relance finale (7 jours après échéance)
+
+La commande met automatiquement à jour le statut des factures en "overdue" après l'échéance.
+
+**Recommandation** : Planifier en cron quotidien (ex: tous les jours à 9h)
+
+### 📋 Rappels d'expiration de contrats
+```bash
+php artisan contracts:send-expiry-reminders
+```
+Envoie des alertes de renouvellement aux clients avant expiration de leur contrat :
+- **J-30** : Première alerte (30 jours avant expiration)
+- **J-15** : Rappel intermédiaire (15 jours avant)
+- **J-7** : Alerte urgente (7 jours avant)
+
+La commande met automatiquement à jour le statut des contrats expirés.
+
+**Recommandation** : Planifier en cron quotidien (ex: tous les jours à 10h)
+
+### 🎫 Expiration des réservations
+```bash
+php artisan reservations:expire-old
+```
+Expire automatiquement les réservations en statut "pending" dont la date d'expiration est dépassée. Les réservations sont valables 48 heures par défaut.
+
+La commande affiche le nombre de réservations expirées.
+
+**Recommandation** : Planifier en cron horaire ou quotidien selon le volume
+
+### 📅 Configuration du CRON (production)
+
+Ajouter dans le crontab Laravel (via `app/Console/Kernel.php`) :
+
+```php
+protected function schedule(Schedule $schedule): void
+{
+    // Rappels de paiement - tous les jours à 9h
+    $schedule->command('payments:send-reminders')
+        ->dailyAt('09:00')
+        ->onOneServer();
+
+    // Rappels d'expiration - tous les jours à 10h
+    $schedule->command('contracts:send-expiry-reminders')
+        ->dailyAt('10:00')
+        ->onOneServer();
+
+    // Expiration réservations - toutes les heures
+    $schedule->command('reservations:expire-old')
+        ->hourly()
+        ->onOneServer();
+}
+```
+
+Puis ajouter dans le crontab système :
+```bash
+* * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
+```
+
 ### 📊 Fonctionnalités actuelles
 
 #### Backend
-- ✅ 13 migrations complètes avec contraintes et indexes
+- ✅ 20 migrations complètes avec contraintes et indexes
   - Migrations originales (sites, buildings, floors, boxes, customers, contracts, invoices, payments, tenants)
   - Migration users multi-tenant
   - Migration currencies (6 devises)
   - Migration vat_rates (18 pays)
   - Migration currency support sur tables existantes
-- ✅ 12 modèles Eloquent avec relations bidirectionnelles
-  - Modèles originaux + User + Currency + VatRate
+  - Migration reservations (réservation en ligne)
+  - Migration add_stripe_customer_id_to_customers
+  - Migration insurance_products (catalogue assurances)
+  - Migration contract_insurances (souscriptions)
+- ✅ 15 modèles Eloquent avec relations bidirectionnelles
+  - Modèles originaux + User + Currency + VatRate + Reservation + InsuranceProduct + ContractInsurance
   - Trait Notifiable sur Customer pour notifications
-- ✅ Auto-génération des numéros (contrats, factures, codes d'accès)
+- ✅ Auto-génération des numéros (contrats, factures, codes d'accès, réservations)
 - ✅ Auto-calcul volume/surface des boxes
 - ✅ Calculs automatiques TVA et conversions de devises
 - ✅ Soft deletes sur toutes les entités
-- ✅ 10 seeders avec données réalistes européennes
-  - Seeders originaux + UserSeeder + CurrencySeeder + VatRateSeeder
-- ✅ 6 controllers REST (Dashboard, Sites, Boxes, Customers, Contracts, ClientPortal)
-- ✅ 5 notifications email professionnelles
+- ✅ 11 seeders avec données réalistes européennes
+  - Seeders originaux + UserSeeder + CurrencySeeder + VatRateSeeder + InsuranceProductSeeder
+- ✅ 8 controllers REST (Dashboard, Sites, Boxes, Customers, Contracts, ClientPortal, Reservations, StripePayment)
+- ✅ 8 notifications email professionnelles
   - ContractCreated, PaymentReminder, ContractExpiring, InvoiceAvailable, PaymentConfirmed
-- ✅ 2 commandes Artisan automatisées
+  - ReservationCreated, ReservationConfirmed, ReservationCancelled
+  - PaymentFailed, PaymentRefunded
+- ✅ 3 commandes Artisan automatisées
   - payments:send-reminders (rappels J-7, J-3, J+1, J+3, J+7)
   - contracts:send-expiry-reminders (30, 15, 7 jours avant)
+  - reservations:expire-old (expiration auto des réservations)
 - ✅ Workflow automatique de statut des boxes selon contrats
 - ✅ Laravel Breeze avec Inertia pour authentification
 - ✅ Modèle User adapté pour multi-tenancy avec 4 rôles
+- ✅ Génération PDF professionnelle (DomPDF) pour factures et contrats
 
 #### Frontend
 - ✅ Configuration Inertia.js + Vue.js 3 + Vite
@@ -272,7 +353,114 @@ Une fois l'installation terminée, vous pouvez explorer :
 
 ## 📝 Changelog
 
-### [0.9.0] - 2025-11-16 (Current) 🎉 MVP PHASE 1 TERMINÉE
+### [0.10.0] - 2025-11-16 (Current) 🎉 POST-MVP ENHANCEMENTS
+
+**📧 Notifications Email Étendues** ⭐ ENGAGEMENT CLIENT
+- 3 nouvelles notifications pour les réservations:
+  - ReservationCreatedNotification: Confirmation lors de création réservation
+  - ReservationConfirmedNotification: Validation admin avec prochaines étapes
+  - ReservationCancelledNotification: Annulation avec raison optionnelle
+- 2 nouvelles notifications pour les paiements:
+  - PaymentFailedNotification: Alerte échec paiement Stripe avec message d'erreur
+  - PaymentRefundedNotification: Confirmation remboursement avec montant
+- Toutes les notifications:
+  - Asynchrones (ShouldQueue)
+  - Dual channel (email + database pour Customer, email seul pour réservations anonymes)
+  - Avec relations eager-loaded
+  - Templates professionnels avec CTA
+
+**📄 Génération PDF Professionnelle** ⭐ DOCUMENT LÉGAL
+- Installation barryvdh/laravel-dompdf v3.1.1
+- Template facture professionnel (invoice.blade.php - 280+ lignes):
+  - En-tête avec logo et informations société
+  - Détails client et facture (numéro, dates, contrat, box)
+  - Table itemisée avec descriptions
+  - Breakdown TVA (HT, taux TVA, montant TVA, TTC)
+  - Footer avec mentions légales
+  - Styling professionnel (Tailwind-inspired inline CSS)
+- Template contrat complet (contract.blade.php - 320+ lignes):
+  - Parties (Bailleur/Locataire) avec coordonnées complètes
+  - Objet du contrat avec détails box et code d'accès
+  - Durée du contrat (début/fin)
+  - Conditions financières (loyer, caution, fréquence)
+  - Description biens stockés
+  - Conditions générales (8 articles juridiques)
+  - Section signature pour les deux parties
+- ClientPortalController mis à jour:
+  - downloadInvoice(): Génération PDF facture
+  - downloadContract(): Génération PDF contrat
+- Support multi-devises dans les PDF
+
+**🛡️ Module Assurance Complet** ⭐ REVENUS RÉCURRENTS
+- Migration insurance_products:
+  - Catalogue produits assurance (tenant_id nullable pour produits globaux)
+  - Couverture max, détails garanties, exclusions
+  - Prix mensuel et annuel (avec réduction)
+  - Taux de commission (20-40%)
+  - Statut actif/inactif, obligatoire/optionnel
+- Migration contract_insurances:
+  - Lien contrat ↔ produit assurance
+  - Historique des prix (monthly_premium, commission_amount)
+  - Montant couverture effectif
+  - Dates début/fin
+  - Statut (active, cancelled, expired)
+  - Cascade delete sur contrats, restrict sur produits
+- Modèle InsuranceProduct avec méthodes:
+  - calculateCommission(): Calcul commission selon taux
+  - formatMonthlyPrice(): Formatage prix avec devise
+  - getYearlySavings(): Calcul économies annuel vs mensuel
+  - Scopes: active(), mandatory(), forTenant()
+  - Relations: tenant, contractInsurances
+- Modèle ContractInsurance avec méthodes:
+  - cancel(): Annulation assurance avec mise à jour statut
+  - isActive(): Vérification statut actif
+  - getTotalPremiumPaid(): Calcul total primes payées
+  - getTotalCommissionEarned(): Calcul total commissions
+  - Scopes: active()
+  - Relations: contract, insuranceProduct
+- InsuranceProductSeeder avec 5 produits réalistes:
+  1. Assurance Minimale (Obligatoire): €4.90/mois - €1,500 couverture - 20% commission
+  2. Assurance Essentielle: €9.90/mois - €3,000 couverture - 25% commission
+  3. Assurance Confort: €19.90/mois - €7,500 couverture - 30% commission
+  4. Assurance Premium: €34.90/mois - €15,000 couverture - 35% commission
+  5. Assurance Professionnelle: €59.90/mois - €30,000 couverture - 40% commission
+- Yearly pricing avec 2 mois offerts
+- Détails de couverture et exclusions pour chaque niveau
+
+**⏰ Commande Artisan Expiration Réservations**
+- ExpireOldReservations command (reservations:expire-old):
+  - Expiration automatique des réservations pending passées
+  - Update statut vers 'expired'
+  - Compteur de réservations expirées
+  - Ready pour scheduling cron (recommandé: daily)
+
+**🔗 Intégrations Notifications**
+- ReservationController mis à jour:
+  - Email confirmation lors création (store)
+  - Email validation lors confirmation admin (confirm)
+  - Email annulation avec raison (cancel)
+- StripePaymentController mis à jour:
+  - Email PaymentFailed lors webhook payment_intent.failed
+  - Email PaymentRefunded lors webhook charge.refunded
+- Utilisation de Notification::route('mail') pour réservations anonymes
+
+**📊 Statistiques Mises à Jour**
+- 20 migrations totales (vs 16 en v0.9.0)
+- 15 modèles Eloquent (vs 13)
+- 8 notifications email (vs 5)
+- 11 seeders (vs 10)
+- 3 commandes Artisan (vs 2)
+- 2 templates PDF professionnels
+- 5 produits d'assurance configurables
+
+**🎯 Différenciateurs Concurrentiels**
+- ✅ Documents PDF professionnels générés automatiquement
+- ✅ Module assurance avec revenus récurrents (20-40% commission)
+- ✅ Notifications complètes sur tout le parcours client
+- ✅ Expiration automatique des réservations
+- ✅ Support assurance obligatoire + optionnelle
+
+### [0.9.0] - 2025-11-16 🎉 MVP PHASE 1 TERMINÉE
 
 **💳 Intégration Stripe Complète** ⭐ CRITIQUE
 - Configuration Stripe dans config/services.php (key, secret, webhook_secret)
@@ -608,6 +796,6 @@ Ce projet est propriétaire. Tous droits réservés.
 
 ---
 
-**Version actuelle** : 0.9.0 (MVP Phase 1 - 100% complété) 🎉✅
+**Version actuelle** : 0.10.0 (Post-MVP Enhancements) 🎉✅
 **Date de dernière mise à jour** : 16 novembre 2025
-**Prochaines étapes** : Module Assurance + Facturation récurrente + SEPA + Signature électronique
+**Prochaines étapes** : Frontend Assurance + Facturation récurrente + SEPA + Signature électronique
