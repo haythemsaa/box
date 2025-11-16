@@ -54,6 +54,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('sites', SiteController::class);
 
     // Boxes Management
+    Route::get('/boxes/plan', [BoxController::class, 'plan'])->name('boxes.plan');
     Route::resource('boxes', BoxController::class);
 
     // Customers Management

@@ -150,6 +150,60 @@ class BoxController extends Controller
     }
 
     /**
+     * Display the interactive box plan.
+     */
+    public function plan(Request $request): Response
+    {
+        // Get all boxes with their active contracts
+        $boxes = Box::with(['floor.building.site', 'contracts' => function ($query) {
+            $query->where('status', 'active')
+                  ->with('customer')
+                  ->latest()
+                  ->limit(1);
+        }])
+        ->orderBy('number')
+        ->get()
+        ->map(function ($box) {
+            $activeContract = $box->contracts->first();
+
+            return [
+                'id' => $box->id,
+                'number' => $box->number,
+                'volume' => $box->volume,
+                'surface' => $box->area,
+                'status' => $box->status,
+                'type' => $box->type,
+                'floor' => $box->floor ? [
+                    'id' => $box->floor->id,
+                    'name' => $box->floor->name,
+                ] : null,
+                'contract' => $activeContract ? [
+                    'id' => $activeContract->id,
+                    'contract_number' => $activeContract->contract_number,
+                    'start_date' => $activeContract->start_date,
+                    'customer_name' => $activeContract->customer->name,
+                ] : null,
+            ];
+        });
+
+        // Calculate statistics
+        $totalBoxes = $boxes->count();
+        $occupiedBoxes = $boxes->where('status', '!=', 'available')->count();
+        $availableBoxes = $totalBoxes - $occupiedBoxes;
+
+        $stats = [
+            'total' => $totalBoxes,
+            'occupied' => $occupiedBoxes,
+            'available' => $availableBoxes,
+        ];
+
+        return Inertia::render('Boxes/Plan', [
+            'boxes' => $boxes,
+            'stats' => $stats,
+        ]);
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(Box $box): RedirectResponse
