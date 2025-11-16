@@ -24,12 +24,12 @@ BoxManager est une plateforme SaaS multi-tenant complète destinée à la gestio
 - ✅ Modèles Eloquent avec relations
 - ✅ Frontend Vue.js 3 + Inertia.js
 - ✅ Gestion Sites (CRUD complet)
-- ✅ Gestion Box (CRUD complet avec calculs auto)
+- ✅ Gestion Boxes (CRUD complet avec calculs auto)
+- ✅ Gestion Clients (CRUD complet avec types dynamiques)
 - ✅ Dashboard avec statistiques
 - ✅ Seeders avec données de test
-- ⏳ Authentification multi-tenant
-- ⏳ Gestion Clients (CRUD)
 - ⏳ Gestion Contrats (CRUD)
+- ⏳ Authentification multi-tenant
 - ⏳ Réservation en ligne
 - ⏳ Paiement CB (Stripe)
 - ⏳ 3 langues : FR, EN, NL
@@ -199,7 +199,7 @@ Une fois l'installation terminée, vous pouvez explorer :
 - ✅ Auto-calcul volume/surface des boxes
 - ✅ Soft deletes sur toutes les entités
 - ✅ 7 seeders avec données réalistes
-- ✅ 3 controllers REST (Dashboard, Sites, Boxes)
+- ✅ 4 controllers REST (Dashboard, Sites, Boxes, Customers)
 
 #### Frontend
 - ✅ Configuration Inertia.js + Vue.js 3 + Vite
@@ -207,6 +207,8 @@ Une fois l'installation terminée, vous pouvez explorer :
 - ✅ Dashboard avec 4 KPI et activité récente
 - ✅ CRUD Sites complet (liste, création, édition, suppression)
 - ✅ CRUD Boxes complet avec sélecteurs hiérarchiques
+- ✅ CRUD Customers complet avec formulaires dynamiques (particulier/entreprise)
+- ✅ Recherche et filtres avancés
 - ✅ Formulaires avec validation temps réel
 - ✅ Calculs automatiques (volume/surface)
 - ✅ Design moderne Tailwind CSS
@@ -225,7 +227,29 @@ Une fois l'installation terminée, vous pouvez explorer :
 
 ## 📝 Changelog
 
-### [0.3.0] - 2025-11-15 (Current)
+### [0.4.0] - 2025-11-15 (Current)
+
+**Ajouté**
+- Gestion complète des Clients (CRUD)
+  - CustomerController avec recherche, filtres et pagination
+  - Customers/Index.vue avec table interactive et filtres
+  - Customers/Create.vue avec formulaire dynamique selon le type
+  - Customers/Edit.vue avec pré-remplissage et validation
+- Support clients particuliers ET entreprises
+  - Champs dynamiques selon le type sélectionné
+  - Validation conditionnelle côté serveur
+  - Interface radio pour sélection du type
+- Recherche multi-critères (nom, email, téléphone, entreprise)
+- Filtres par type (particulier/entreprise) et statut
+- Badges visuels pour type et statut
+- Compteur de contrats par client
+
+**Amélioré**
+- Navigation avec lien Clients dans le menu
+- Routes avec CustomerController resource
+- Design cohérent avec le reste de l'application
+
+### [0.3.0] - 2025-11-15
 
 **Ajouté**
 - Formulaires CRUD complets pour Sites (Create/Edit avec validation)
@@ -284,6 +308,6 @@ Ce projet est propriétaire. Tous droits réservés.
 
 ---
 
-**Version actuelle** : 0.3.0 (MVP Phase 1 - 60% complété)
+**Version actuelle** : 0.4.0 (MVP Phase 1 - 70% complété)
 **Date de dernière mise à jour** : 15 novembre 2025
-**Prochaine étape** : Authentification multi-tenant + Gestion Clients
+**Prochaine étape** : Gestion Contrats + Authentification multi-tenant
