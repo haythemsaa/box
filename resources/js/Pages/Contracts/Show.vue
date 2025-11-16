@@ -29,9 +29,7 @@
                         <h3 class="text-lg font-semibold text-gray-900">Statut du contrat</h3>
                         <p class="mt-1 text-sm text-gray-500">État actuel de la location</p>
                     </div>
-                    <span :class="getStatusClass(contract.status)" class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium">
-                        {{ getStatusLabel(contract.status) }}
-                    </span>
+                    <StatusBadge :status="contract.status" type="contract" size="large" />
                 </div>
             </div>
 
@@ -190,9 +188,7 @@
                                     {{ insurance.start_date }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span :class="getInsuranceStatusClass(insurance.status)" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
-                                        {{ getInsuranceStatusLabel(insurance.status) }}
-                                    </span>
+                                    <StatusBadge :status="insurance.status" type="insurance" size="small" />
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                     <div>{{ formatCurrency(insurance.total_premium_paid) }}</div>
@@ -212,9 +208,15 @@
                         </tbody>
                     </table>
                 </div>
-                <div v-else class="p-6 text-center text-sm text-gray-500">
-                    Aucune assurance souscrite pour ce contrat
-                </div>
+                <EmptyState
+                    v-else
+                    icon="shield"
+                    title="Aucune assurance souscrite"
+                    description="Ajoutez une assurance pour protéger ce contrat"
+                    :action-text="availableInsuranceProducts && availableInsuranceProducts.length > 0 ? 'Ajouter une assurance' : ''"
+                    @action="showAddInsuranceModal = true"
+                    size="medium"
+                />
             </div>
 
             <!-- Add Insurance Modal -->
@@ -350,6 +352,8 @@
 import { ref, reactive } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import StatusBadge from '@/Components/StatusBadge.vue';
+import EmptyState from '@/Components/EmptyState.vue';
 
 const props = defineProps({
     contract: {
@@ -375,28 +379,6 @@ const formatCurrency = (amount) => {
     }).format(amount);
 };
 
-const getStatusClass = (status) => {
-    const classes = {
-        draft: 'bg-gray-100 text-gray-800',
-        pending: 'bg-yellow-100 text-yellow-800',
-        active: 'bg-green-100 text-green-800',
-        expired: 'bg-orange-100 text-orange-800',
-        cancelled: 'bg-red-100 text-red-800',
-    };
-    return classes[status] || 'bg-gray-100 text-gray-800';
-};
-
-const getStatusLabel = (status) => {
-    const labels = {
-        draft: 'Brouillon',
-        pending: 'En attente',
-        active: 'Actif',
-        expired: 'Expiré',
-        cancelled: 'Annulé',
-    };
-    return labels[status] || status;
-};
-
 const getBillingFrequencyLabel = (frequency) => {
     const labels = {
         monthly: 'mensuelle',
@@ -404,45 +386,6 @@ const getBillingFrequencyLabel = (frequency) => {
         yearly: 'annuelle',
     };
     return labels[frequency] || frequency;
-};
-
-const getInvoiceStatusClass = (status) => {
-    const classes = {
-        paid: 'bg-green-100 text-green-800',
-        pending: 'bg-yellow-100 text-yellow-800',
-        overdue: 'bg-red-100 text-red-800',
-    };
-    return classes[status] || 'bg-gray-100 text-gray-800';
-};
-
-const getPaymentStatusClass = (status) => {
-    const classes = {
-        completed: 'bg-green-100 text-green-800',
-        pending: 'bg-yellow-100 text-yellow-800',
-        failed: 'bg-red-100 text-red-800',
-        refunded: 'bg-orange-100 text-orange-800',
-    };
-    return classes[status] || 'bg-gray-100 text-gray-800';
-};
-
-const getInsuranceStatusClass = (status) => {
-    const classes = {
-        active: 'bg-green-100 text-green-800',
-        pending: 'bg-yellow-100 text-yellow-800',
-        cancelled: 'bg-red-100 text-red-800',
-        expired: 'bg-orange-100 text-orange-800',
-    };
-    return classes[status] || 'bg-gray-100 text-gray-800';
-};
-
-const getInsuranceStatusLabel = (status) => {
-    const labels = {
-        active: 'Actif',
-        pending: 'En attente',
-        cancelled: 'Annulé',
-        expired: 'Expiré',
-    };
-    return labels[status] || status;
 };
 
 const addInsurance = () => {

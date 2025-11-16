@@ -6,6 +6,7 @@ import LineChart from '@/Components/Charts/LineChart.vue';
 import DoughnutChart from '@/Components/Charts/DoughnutChart.vue';
 import EmptyState from '@/Components/EmptyState.vue';
 import StatusBadge from '@/Components/StatusBadge.vue';
+import KpiCard from '@/Components/KpiCard.vue';
 
 const props = defineProps({
     stats: Object,
@@ -153,80 +154,22 @@ const formatDate = (dateString) => {
                 <!-- KPI Cards -->
                 <h2 class="text-xl font-semibold text-gray-900 mb-4">Statistiques d'occupation</h2>
                 <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-6 mb-8">
-                    <!-- Total Boxes -->
-                    <div class="bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-lg shadow-md p-6 text-white transform transition-all duration-200 hover:scale-105 hover:shadow-lg">
-                        <div class="text-5xl font-bold mb-2">{{ stats.total_boxes }}</div>
-                        <div class="text-sm opacity-90">Nb de box</div>
-                    </div>
-
-                    <!-- Available Boxes -->
-                    <div class="bg-gradient-to-br from-cyan-400 to-cyan-500 rounded-lg shadow-md p-6 text-white transform transition-all duration-200 hover:scale-105 hover:shadow-lg">
-                        <div class="text-5xl font-bold mb-2">{{ stats.available_boxes }}</div>
-                        <div class="text-sm opacity-90">Nb de box sans contrat</div>
-                    </div>
-
-                    <!-- Occupied Boxes -->
-                    <div class="bg-gradient-to-br from-teal-500 to-teal-600 rounded-lg shadow-md p-6 text-white transform transition-all duration-200 hover:scale-105 hover:shadow-lg">
-                        <div class="text-5xl font-bold mb-2">{{ stats.occupation_percentage }}%</div>
-                        <div class="text-sm opacity-90">% d'occup. en nombre</div>
-                    </div>
-
-                    <!-- Active Contracts -->
-                    <div class="bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-lg shadow-md p-6 text-white transform transition-all duration-200 hover:scale-105 hover:shadow-lg">
-                        <div class="text-5xl font-bold mb-2">{{ stats.active_contracts }}</div>
-                        <div class="text-sm opacity-90">Nb de contrat</div>
-                    </div>
-
-                    <!-- Active Customers -->
-                    <div class="bg-gradient-to-br from-cyan-400 to-cyan-500 rounded-lg shadow-md p-6 text-white transform transition-all duration-200 hover:scale-105 hover:shadow-lg">
-                        <div class="text-5xl font-bold mb-2">{{ stats.total_customers }}</div>
-                        <div class="text-sm opacity-90">Clients Actifs</div>
-                    </div>
-
-                    <!-- Total Surface -->
-                    <div class="bg-gradient-to-br from-teal-500 to-teal-600 rounded-lg shadow-md p-6 text-white transform transition-all duration-200 hover:scale-105 hover:shadow-lg">
-                        <div class="text-5xl font-bold mb-2">{{ formatNumber(stats.total_surface) }}</div>
-                        <div class="text-sm opacity-90">Surface totale en m²</div>
-                    </div>
+                    <KpiCard :value="stats.total_boxes" label="Nb de box" color="cyan" />
+                    <KpiCard :value="stats.available_boxes" label="Nb de box sans contrat" color="cyan" />
+                    <KpiCard :value="`${stats.occupation_percentage}%`" label="% d'occup. en nombre" color="teal" />
+                    <KpiCard :value="stats.active_contracts" label="Nb de contrat" color="cyan" />
+                    <KpiCard :value="stats.total_customers" label="Clients Actifs" color="cyan" />
+                    <KpiCard :value="formatNumber(stats.total_surface)" label="Surface totale en m²" color="teal" />
                 </div>
 
                 <!-- Second Row KPIs -->
                 <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-6 mb-8">
-                    <!-- Total Volume -->
-                    <div class="bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-lg shadow-md p-6 text-white transform transition-all duration-200 hover:scale-105 hover:shadow-lg">
-                        <div class="text-5xl font-bold mb-2">{{ formatNumber(stats.total_volume) }}</div>
-                        <div class="text-sm opacity-90">Volume total en m³</div>
-                    </div>
-
-                    <!-- Surface Occupied (placeholder) -->
-                    <div class="bg-gradient-to-br from-cyan-400 to-cyan-500 rounded-lg shadow-md p-6 text-white transform transition-all duration-200 hover:scale-105 hover:shadow-lg">
-                        <div class="text-5xl font-bold mb-2">0.00%</div>
-                        <div class="text-sm opacity-90">Surface occupée</div>
-                    </div>
-
-                    <!-- Occupation Percentage -->
-                    <div class="bg-gradient-to-br from-teal-500 to-teal-600 rounded-lg shadow-md p-6 text-white transform transition-all duration-200 hover:scale-105 hover:shadow-lg">
-                        <div class="text-5xl font-bold mb-2">{{ stats.occupation_percentage }}%</div>
-                        <div class="text-sm opacity-90">% d'occup. en nombre</div>
-                    </div>
-
-                    <!-- Monthly Revenue (placeholder) -->
-                    <div class="bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-lg shadow-md p-6 text-white transform transition-all duration-200 hover:scale-105 hover:shadow-lg">
-                        <div class="text-4xl font-bold mb-2">{{ formatCurrency(0) }}</div>
-                        <div class="text-sm opacity-90">CA théorique HT mensuel</div>
-                    </div>
-
-                    <!-- Insurance Revenue -->
-                    <div class="bg-gradient-to-br from-cyan-400 to-cyan-500 rounded-lg shadow-md p-6 text-white transform transition-all duration-200 hover:scale-105 hover:shadow-lg">
-                        <div class="text-4xl font-bold mb-2">{{ formatCurrency(stats.insurance_monthly_revenue) }}</div>
-                        <div class="text-sm opacity-90">Montant assure</div>
-                    </div>
-
-                    <!-- Max Occupation Revenue (placeholder) -->
-                    <div class="bg-gradient-to-br from-teal-500 to-teal-600 rounded-lg shadow-md p-6 text-white transform transition-all duration-200 hover:scale-105 hover:shadow-lg">
-                        <div class="text-4xl font-bold mb-2">{{ formatCurrency(0) }}</div>
-                        <div class="text-sm opacity-90">CA théo. HT pour Occup. max</div>
-                    </div>
+                    <KpiCard :value="formatNumber(stats.total_volume)" label="Volume total en m³" color="cyan" />
+                    <KpiCard value="0.00%" label="Surface occupée" color="cyan" />
+                    <KpiCard :value="`${stats.occupation_percentage}%`" label="% d'occup. en nombre" color="teal" />
+                    <KpiCard :value="formatCurrency(0)" label="CA théorique HT mensuel" color="cyan" />
+                    <KpiCard :value="formatCurrency(stats.insurance_monthly_revenue)" label="Montant assuré" color="cyan" />
+                    <KpiCard :value="formatCurrency(0)" label="CA théo. HT pour Occup. max" color="teal" />
                 </div>
 
                 <!-- Charts Section -->
