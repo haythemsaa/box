@@ -30,12 +30,8 @@
                         <p class="mt-1 text-sm text-gray-500">Type de client et statut actuel</p>
                     </div>
                     <div class="flex gap-2">
-                        <span :class="customer.type === 'company' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium">
-                            {{ customer.type === 'company' ? 'Entreprise' : 'Particulier' }}
-                        </span>
-                        <span :class="getStatusClass(customer.status)" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium">
-                            {{ getStatusLabel(customer.status) }}
-                        </span>
+                        <StatusBadge :status="customer.type" type="customer_type" />
+                        <StatusBadge :status="customer.status" type="customer" />
                     </div>
                 </div>
             </div>
@@ -140,9 +136,7 @@
                                     {{ formatCurrency(contract.monthly_amount) }}/mois
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span :class="getContractStatusClass(contract.status)" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
-                                        {{ getContractStatusLabel(contract.status) }}
-                                    </span>
+                                    <StatusBadge :status="contract.status" type="contract" size="small" />
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <Link :href="`/contracts/${contract.id}`" class="text-indigo-600 hover:text-indigo-900">
@@ -153,9 +147,13 @@
                         </tbody>
                     </table>
                 </div>
-                <div v-else class="p-6 text-center text-sm text-gray-500">
-                    Aucun contrat pour le moment
-                </div>
+                <EmptyState
+                    v-else
+                    icon="document"
+                    title="Aucun contrat"
+                    description="Ce client n'a pas encore de contrat."
+                    size="small"
+                />
             </div>
         </div>
     </AppLayout>
@@ -164,6 +162,8 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import StatusBadge from '@/Components/StatusBadge.vue';
+import EmptyState from '@/Components/EmptyState.vue';
 
 defineProps({
     customer: {
@@ -181,45 +181,5 @@ const formatCurrency = (amount) => {
 
 const formatDate = (date) => {
     return new Date(date).toLocaleDateString('fr-FR');
-};
-
-const getStatusClass = (status) => {
-    const classes = {
-        active: 'bg-green-100 text-green-800',
-        inactive: 'bg-gray-100 text-gray-800',
-        suspended: 'bg-red-100 text-red-800',
-    };
-    return classes[status] || 'bg-gray-100 text-gray-800';
-};
-
-const getStatusLabel = (status) => {
-    const labels = {
-        active: 'Actif',
-        inactive: 'Inactif',
-        suspended: 'Suspendu',
-    };
-    return labels[status] || status;
-};
-
-const getContractStatusClass = (status) => {
-    const classes = {
-        draft: 'bg-gray-100 text-gray-800',
-        pending: 'bg-yellow-100 text-yellow-800',
-        active: 'bg-green-100 text-green-800',
-        expired: 'bg-orange-100 text-orange-800',
-        cancelled: 'bg-red-100 text-red-800',
-    };
-    return classes[status] || 'bg-gray-100 text-gray-800';
-};
-
-const getContractStatusLabel = (status) => {
-    const labels = {
-        draft: 'Brouillon',
-        pending: 'En attente',
-        active: 'Actif',
-        expired: 'Expiré',
-        cancelled: 'Annulé',
-    };
-    return labels[status] || status;
 };
 </script>

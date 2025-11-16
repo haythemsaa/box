@@ -128,25 +128,32 @@
                                         <div class="text-sm font-medium text-gray-900">{{ box.number }}</div>
                                         <div class="text-xs text-gray-500">{{ box.volume }}m³</div>
                                         <div class="mt-1">
-                                            <span :class="getBoxStatusClass(box.status)" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium">
-                                                {{ getBoxStatusLabel(box.status) }}
-                                            </span>
+                                            <StatusBadge :status="box.status" type="box" size="small" />
                                         </div>
                                     </Link>
                                 </div>
-                                <div v-else class="text-center text-sm text-gray-500 py-2">
-                                    Aucun box sur cet étage
-                                </div>
+                                <EmptyState
+                                    v-else
+                                    icon="box"
+                                    title="Aucun box sur cet étage"
+                                    size="small"
+                                />
                             </div>
                         </div>
-                        <div v-else class="text-sm text-gray-500">
-                            Aucun étage dans ce bâtiment
-                        </div>
+                        <EmptyState
+                            v-else
+                            icon="folder"
+                            title="Aucun étage dans ce bâtiment"
+                            size="small"
+                        />
                     </div>
                 </div>
-                <div v-else class="p-6 text-center text-sm text-gray-500">
-                    Aucun bâtiment sur ce site
-                </div>
+                <EmptyState
+                    v-else
+                    icon="building"
+                    title="Aucun bâtiment sur ce site"
+                    description="Ajoutez des bâtiments pour organiser vos boxes"
+                />
             </div>
         </div>
     </AppLayout>
@@ -156,6 +163,8 @@
 import { computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import StatusBadge from '@/Components/StatusBadge.vue';
+import EmptyState from '@/Components/EmptyState.vue';
 
 const props = defineProps({
     site: {
@@ -186,16 +195,6 @@ const getBuildingBoxCount = (building) => {
     return building.floors.reduce((sum, floor) => sum + floor.boxes.length, 0);
 };
 
-const getBoxStatusClass = (status) => {
-    const classes = {
-        available: 'bg-green-100 text-green-800',
-        occupied: 'bg-red-100 text-red-800',
-        maintenance: 'bg-yellow-100 text-yellow-800',
-        reserved: 'bg-blue-100 text-blue-800',
-    };
-    return classes[status] || 'bg-gray-100 text-gray-800';
-};
-
 const getBoxBorderClass = (status) => {
     const classes = {
         available: 'border-green-300',
@@ -204,15 +203,5 @@ const getBoxBorderClass = (status) => {
         reserved: 'border-blue-300',
     };
     return classes[status] || 'border-gray-300';
-};
-
-const getBoxStatusLabel = (status) => {
-    const labels = {
-        available: 'Dispo',
-        occupied: 'Occupé',
-        maintenance: 'Maint.',
-        reserved: 'Réservé',
-    };
-    return labels[status] || status;
 };
 </script>

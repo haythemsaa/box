@@ -32,10 +32,11 @@ const statusConfigs = {
         expired: { color: 'bg-gray-100 text-gray-800', label: 'Expiré', icon: '⊘' }
     },
     contract: {
+        draft: { color: 'bg-gray-100 text-gray-800', label: 'Brouillon', icon: '📝' },
         active: { color: 'bg-green-100 text-green-800', label: 'Actif', icon: '✓' },
         pending: { color: 'bg-yellow-100 text-yellow-800', label: 'En attente', icon: '⏳' },
         cancelled: { color: 'bg-red-100 text-red-800', label: 'Annulé', icon: '✗' },
-        expired: { color: 'bg-gray-100 text-gray-800', label: 'Expiré', icon: '⊘' },
+        expired: { color: 'bg-orange-100 text-orange-800', label: 'Expiré', icon: '⊘' },
         suspended: { color: 'bg-orange-100 text-orange-800', label: 'Suspendu', icon: '⏸' }
     },
     payment: {
