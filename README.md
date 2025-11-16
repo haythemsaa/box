@@ -580,11 +580,14 @@ Puis ajouter dans le crontab système :
 - Mandatory Auto-Selection: Frontend recevra liste produits obligatoires
 - Duplicate Prevention: Check before insert pour produit déjà actif
 
-**🚧 Travaux Restants (Frontend)**
-- [ ] Modifier Contracts/Create.vue pour sélection assurances
-- [ ] Modifier Contracts/Show.vue pour affichage et gestion
-- [ ] Créer composant InsuranceSelector.vue réutilisable
+**✅ Travaux Complétés (v0.13.0)**
+- ✅ Modifier Contracts/Create.vue pour sélection assurances
+- ✅ Modifier Contracts/Show.vue pour affichage et gestion
+- ✅ Créer composant InsuranceSelector.vue réutilisable
+
+**🚧 Travaux Restants**
 - [ ] Tests complets workflow end-to-end
+- [ ] Modifier Contracts/Edit.vue pour édition assurances
 
 **📊 Impact Statistiques**
 - Backend 100% complet pour intégration assurance

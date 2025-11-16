@@ -162,6 +162,35 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Assurances (lecture seule) -->
+                    <div v-if="contract.insurances && contract.insurances.length > 0" class="pt-6 border-t border-gray-200">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Assurances actives</h3>
+                            <Link
+                                :href="`/contracts/${contract.id}`"
+                                class="text-sm text-indigo-600 hover:text-indigo-900 font-medium"
+                            >
+                                Gérer les assurances →
+                            </Link>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                            <div
+                                v-for="insurance in contract.insurances.filter(i => i.status === 'active')"
+                                :key="insurance.id"
+                                class="flex justify-between items-center text-sm"
+                            >
+                                <span class="text-gray-900 font-medium">{{ insurance.product_name }}</span>
+                                <span class="text-gray-600">{{ formatCurrency(insurance.monthly_premium) }}/mois</span>
+                            </div>
+                            <div v-if="activeInsurancesCount === 0" class="text-sm text-gray-500 text-center py-2">
+                                Aucune assurance active
+                            </div>
+                        </div>
+                        <p class="mt-2 text-xs text-gray-500">
+                            Pour ajouter ou annuler des assurances, rendez-vous sur la page de détails du contrat.
+                        </p>
+                    </div>
                 </div>
 
                 <!-- Actions -->
@@ -195,7 +224,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { Link, useForm, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 
@@ -217,6 +246,18 @@ const form = reactive({
 
 const processing = ref(false);
 const errors = ref({});
+
+const activeInsurancesCount = computed(() => {
+    if (!props.contract.insurances) return 0;
+    return props.contract.insurances.filter(i => i.status === 'active').length;
+});
+
+const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('fr-FR', {
+        style: 'currency',
+        currency: 'EUR',
+    }).format(amount);
+};
 
 const submitForm = () => {
     processing.value = true;
