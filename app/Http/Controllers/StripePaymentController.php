@@ -12,6 +12,8 @@ use Inertia\Inertia;
 use Stripe\Exception\SignatureVerificationException;
 use Stripe\Webhook;
 use App\Notifications\PaymentConfirmedNotification;
+use App\Notifications\PaymentFailedNotification;
+use App\Notifications\PaymentRefundedNotification;
 
 class StripePaymentController extends Controller
 {
@@ -313,7 +315,9 @@ class StripePaymentController extends Controller
                 'error' => $paymentIntent->last_payment_error->message ?? 'Unknown',
             ]);
 
-            // TODO: Send payment failed notification to customer
+            // Send payment failed notification to customer
+            $errorMessage = $paymentIntent->last_payment_error->message ?? 'Erreur inconnue';
+            $invoice->customer->notify(new PaymentFailedNotification($invoice, $errorMessage));
         } catch (\Exception $e) {
             Log::error('Error processing payment intent failed webhook', [
                 'invoice_id' => $invoiceId,
@@ -365,7 +369,9 @@ class StripePaymentController extends Controller
                 'amount_refunded' => $charge->amount_refunded / 100,
             ]);
 
-            // TODO: Send refund notification to customer
+            // Send refund notification to customer
+            $refundAmount = $charge->amount_refunded / 100;
+            $payment->customer->notify(new PaymentRefundedNotification($payment, $refundAmount));
         } catch (\Exception $e) {
             Log::error('Error processing charge refunded webhook', [
                 'charge_id' => $charge->id,

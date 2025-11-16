@@ -9,6 +9,7 @@ use App\Models\Payment;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ClientPortalController extends Controller
 {
@@ -278,12 +279,14 @@ class ClientPortalController extends Controller
             abort(403, 'Unauthorized access to this invoice.');
         }
 
-        // TODO: Generate PDF
-        // For now, return JSON
-        return response()->json([
-            'message' => 'PDF generation coming soon',
-            'invoice' => $invoice,
-        ]);
+        // Load relationships
+        $invoice->load(['customer', 'contract.box.site', 'currency']);
+
+        // Generate PDF
+        $pdf = Pdf::loadView('pdf.invoice', compact('invoice'));
+
+        // Download PDF
+        return $pdf->download('facture-' . $invoice->invoice_number . '.pdf');
     }
 
     /**
@@ -301,11 +304,13 @@ class ClientPortalController extends Controller
             abort(403, 'Unauthorized access to this contract.');
         }
 
-        // TODO: Generate PDF
-        // For now, return JSON
-        return response()->json([
-            'message' => 'PDF generation coming soon',
-            'contract' => $contract,
-        ]);
+        // Load relationships
+        $contract->load(['customer', 'box.site', 'currency']);
+
+        // Generate PDF
+        $pdf = Pdf::loadView('pdf.contract', compact('contract'));
+
+        // Download PDF
+        return $pdf->download('contrat-' . $contract->contract_number . '.pdf');
     }
 }

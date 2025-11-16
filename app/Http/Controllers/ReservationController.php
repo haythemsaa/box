@@ -5,7 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Box;
 use App\Models\Reservation;
 use App\Models\Site;
+use App\Notifications\ReservationCreatedNotification;
+use App\Notifications\ReservationConfirmedNotification;
+use App\Notifications\ReservationCancelledNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use Inertia\Inertia;
 
 class ReservationController extends Controller
@@ -119,8 +123,9 @@ class ReservationController extends Controller
             'status' => 'pending',
         ]);
 
-        // TODO: Send confirmation email to customer
-        // TODO: Send notification to site manager
+        // Send confirmation email to customer
+        Notification::route('mail', $reservation->email)
+            ->notify(new ReservationCreatedNotification($reservation));
 
         return redirect()->route('reservations.confirmation', $reservation)
             ->with('success', 'Your reservation has been submitted successfully!');
@@ -199,7 +204,9 @@ class ReservationController extends Controller
 
         $reservation->confirm();
 
-        // TODO: Send confirmation email to customer
+        // Send confirmation email to customer
+        Notification::route('mail', $reservation->email)
+            ->notify(new ReservationConfirmedNotification($reservation));
 
         return back()->with('success', 'Reservation confirmed successfully.');
     }
@@ -213,9 +220,13 @@ class ReservationController extends Controller
             return back()->with('error', 'This reservation cannot be cancelled.');
         }
 
+        $reason = $request->input('reason', '');
+
         $reservation->cancel();
 
-        // TODO: Send cancellation email to customer
+        // Send cancellation email to customer
+        Notification::route('mail', $reservation->email)
+            ->notify(new ReservationCancelledNotification($reservation, $reason));
 
         return back()->with('success', 'Reservation cancelled successfully.');
     }
