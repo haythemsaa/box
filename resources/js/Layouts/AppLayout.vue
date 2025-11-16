@@ -76,6 +76,12 @@
                     <ResponsiveNavLink href="/boxes" :active="$page.url.startsWith('/boxes')">
                         Box
                     </ResponsiveNavLink>
+                    <ResponsiveNavLink href="/customers" :active="$page.url.startsWith('/customers')">
+                        Clients
+                    </ResponsiveNavLink>
+                    <ResponsiveNavLink href="/contracts" :active="$page.url.startsWith('/contracts')">
+                        Contrats
+                    </ResponsiveNavLink>
                 </div>
             </div>
         </nav>
