@@ -26,9 +26,9 @@ BoxManager est une plateforme SaaS multi-tenant complète destinée à la gestio
 - ✅ Gestion Sites (CRUD complet)
 - ✅ Gestion Boxes (CRUD complet avec calculs auto)
 - ✅ Gestion Clients (CRUD complet avec types dynamiques)
+- ✅ Gestion Contrats (CRUD complet avec workflow)
 - ✅ Dashboard avec statistiques
 - ✅ Seeders avec données de test
-- ⏳ Gestion Contrats (CRUD)
 - ⏳ Authentification multi-tenant
 - ⏳ Réservation en ligne
 - ⏳ Paiement CB (Stripe)
@@ -199,7 +199,8 @@ Une fois l'installation terminée, vous pouvez explorer :
 - ✅ Auto-calcul volume/surface des boxes
 - ✅ Soft deletes sur toutes les entités
 - ✅ 7 seeders avec données réalistes
-- ✅ 4 controllers REST (Dashboard, Sites, Boxes, Customers)
+- ✅ 5 controllers REST (Dashboard, Sites, Boxes, Customers, Contracts)
+- ✅ Workflow automatique de statut des boxes selon contrats
 
 #### Frontend
 - ✅ Configuration Inertia.js + Vue.js 3 + Vite
@@ -208,9 +209,11 @@ Une fois l'installation terminée, vous pouvez explorer :
 - ✅ CRUD Sites complet (liste, création, édition, suppression)
 - ✅ CRUD Boxes complet avec sélecteurs hiérarchiques
 - ✅ CRUD Customers complet avec formulaires dynamiques (particulier/entreprise)
-- ✅ Recherche et filtres avancés
+- ✅ CRUD Contracts complet avec sélection client/box et gestion workflow
+- ✅ Recherche et filtres avancés sur toutes les entités
 - ✅ Formulaires avec validation temps réel
 - ✅ Calculs automatiques (volume/surface)
+- ✅ 14 pages Vue.js complètes et fonctionnelles
 - ✅ Design moderne Tailwind CSS
 
 ## 🔒 Sécurité
@@ -227,7 +230,31 @@ Une fois l'installation terminée, vous pouvez explorer :
 
 ## 📝 Changelog
 
-### [0.4.0] - 2025-11-15 (Current)
+### [0.5.0] - 2025-11-16 (Current)
+
+**Ajouté**
+- Gestion complète des Contrats (CRUD)
+  - ContractController avec toutes les opérations CRUD
+  - Contracts/Index.vue avec recherche, filtres par statut et pagination
+  - Contracts/Create.vue avec sélecteurs client/box et validation
+  - Contracts/Show.vue avec vue détaillée, factures et paiements associés
+  - Contracts/Edit.vue avec édition des montants et statut
+- Workflow automatique box-contrat
+  - Box devient "occupé" quand contrat passe à "actif"
+  - Box redevient "disponible" quand contrat expire ou est annulé
+- Recherche multi-critères (numéro de contrat, nom du client)
+- Filtres par statut (brouillon, en attente, actif, expiré, annulé)
+- Auto-remplissage du montant mensuel depuis le prix du box
+- Affichage des factures récentes (10 dernières)
+- Affichage des paiements récents (10 derniers)
+
+**Amélioré**
+- Navigation avec lien Contrats dans le menu
+- Routes avec ContractController resource
+- Logique métier pour gestion du cycle de vie des contrats
+- Cohérence du design avec Tailwind CSS
+
+### [0.4.0] - 2025-11-15
 
 **Ajouté**
 - Gestion complète des Clients (CRUD)
@@ -308,6 +335,6 @@ Ce projet est propriétaire. Tous droits réservés.
 
 ---
 
-**Version actuelle** : 0.4.0 (MVP Phase 1 - 70% complété)
-**Date de dernière mise à jour** : 15 novembre 2025
-**Prochaine étape** : Gestion Contrats + Authentification multi-tenant
+**Version actuelle** : 0.5.0 (MVP Phase 1 - 85% complété)
+**Date de dernière mise à jour** : 16 novembre 2025
+**Prochaine étape** : Authentification multi-tenant + Réservation en ligne
