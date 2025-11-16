@@ -4,6 +4,8 @@ import { Head, Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import LineChart from '@/Components/Charts/LineChart.vue';
 import DoughnutChart from '@/Components/Charts/DoughnutChart.vue';
+import EmptyState from '@/Components/EmptyState.vue';
+import StatusBadge from '@/Components/StatusBadge.vue';
 
 const props = defineProps({
     stats: Object,
@@ -60,17 +62,6 @@ const formatDate = (dateString) => {
         month: '2-digit',
         year: 'numeric'
     });
-};
-
-// Get status badge class
-const getStatusClass = (status) => {
-    const classes = {
-        'active': 'bg-green-100 text-green-800',
-        'pending': 'bg-yellow-100 text-yellow-800',
-        'cancelled': 'bg-red-100 text-red-800',
-        'expired': 'bg-gray-100 text-gray-800',
-    };
-    return classes[status] || 'bg-gray-100 text-gray-800';
 };
 </script>
 
@@ -309,19 +300,14 @@ const getStatusClass = (status) => {
                                 </div>
                             </div>
                         </div>
-                        <div v-else class="text-center py-8 text-gray-500">
-                            <svg class="w-16 h-16 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            <p class="font-medium">Aucune assurance souscrite</p>
-                            <p class="text-sm mt-1">Proposez des assurances à vos clients</p>
-                            <Link
-                                href="/insurance-products"
-                                class="inline-block mt-4 px-4 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition-colors duration-150"
-                            >
-                                Voir les produits
-                            </Link>
-                        </div>
+                        <EmptyState
+                            v-else
+                            icon="shield"
+                            title="Aucune assurance souscrite"
+                            description="Proposez des assurances à vos clients"
+                            action-text="Voir les produits"
+                            action-href="/insurance-products"
+                        />
                     </div>
 
                     <!-- Recent Contracts -->
@@ -339,28 +325,18 @@ const getStatusClass = (status) => {
                                 </div>
                                 <div class="text-right">
                                     <div class="font-semibold text-cyan-600">{{ formatCurrency(contract.monthly_rent) }}</div>
-                                    <span
-                                        :class="getStatusClass(contract.status)"
-                                        class="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
-                                    >
-                                        {{ contract.status }}
-                                    </span>
+                                    <StatusBadge :status="contract.status" type="contract" />
                                 </div>
                             </div>
                         </div>
-                        <div v-else class="text-center py-8 text-gray-500">
-                            <svg class="w-16 h-16 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            <p class="font-medium">Aucun contrat récent</p>
-                            <p class="text-sm mt-1">Créez votre premier contrat</p>
-                            <Link
-                                href="/contracts/create"
-                                class="inline-block mt-4 px-4 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition-colors duration-150"
-                            >
-                                Créer un contrat
-                            </Link>
-                        </div>
+                        <EmptyState
+                            v-else
+                            icon="document"
+                            title="Aucun contrat récent"
+                            description="Créez votre premier contrat"
+                            action-text="Créer un contrat"
+                            action-href="/contracts/create"
+                        />
                     </div>
                 </div>
             </div>
