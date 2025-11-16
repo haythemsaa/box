@@ -94,6 +94,11 @@ class Contract extends Model
         return $this->hasMany(Payment::class);
     }
 
+    public function contractInsurances(): HasMany
+    {
+        return $this->hasMany(ContractInsurance::class);
+    }
+
     public function isActive(): bool
     {
         return $this->status === 'active';

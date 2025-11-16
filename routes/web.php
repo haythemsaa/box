@@ -61,6 +61,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Contracts Management
     Route::resource('contracts', ContractController::class);
+    Route::post('/contracts/{contract}/insurances', [ContractController::class, 'addInsurance'])->name('contracts.insurances.add');
+    Route::delete('/contracts/{contract}/insurances/{contractInsurance}', [ContractController::class, 'cancelInsurance'])->name('contracts.insurances.cancel');
 
     // Insurance Products Management
     Route::resource('insurance-products', InsuranceProductController::class);
