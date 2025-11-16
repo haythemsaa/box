@@ -198,5 +198,26 @@
     "paid": "Payé",
     "unpaid": "Impayé",
     "overdue": "En retard"
+  },
+  "payment": {
+    "secureCheckout": "Paiement sécurisé",
+    "completePayment": "Complétez votre paiement en toute sécurité",
+    "orderSummary": "Récapitulatif",
+    "paymentMethod": "Méthode de paiement",
+    "cardholderName": "Nom du titulaire",
+    "cardDetails": "Informations de carte",
+    "payNow": "Payer {amount}",
+    "processing": "Traitement en cours...",
+    "securePaymentNotice": "Paiement sécurisé par cryptage SSL. Vos informations de carte ne sont jamais stockées.",
+    "initializationError": "Erreur lors de l'initialisation du paiement. Veuillez réessayer.",
+    "processingError": "Erreur lors du traitement du paiement. Veuillez réessayer."
+  },
+  "invoices": {
+    "invoiceNumber": "Numéro de facture",
+    "issueDate": "Date d'émission",
+    "dueDate": "Date d'échéance",
+    "subtotal": "Sous-total",
+    "vat": "TVA",
+    "total": "Total"
   }
 }

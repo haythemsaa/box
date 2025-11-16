@@ -44,6 +44,7 @@ class Customer extends Model implements HasMedia
         'is_verified',
         'is_vip',
         'notes',
+        'stripe_customer_id',
     ];
 
     protected $casts = [

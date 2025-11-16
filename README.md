@@ -18,10 +18,10 @@ BoxManager est une plateforme SaaS multi-tenant complète destinée à la gestio
 
 ## 🎯 Objectifs Business
 
-### Phase 1 - MVP (Mois 1-4) - 98% COMPLÉTÉ ✅
+### Phase 1 - MVP (Mois 1-4) - 100% COMPLÉTÉ ✅🎉
 - ✅ Multi-tenancy basique (Spatie)
-- ✅ Base de données complète (13 migrations + users + currencies + vat_rates)
-- ✅ Modèles Eloquent avec relations (12 modèles)
+- ✅ Base de données complète (16 migrations + users + currencies + vat_rates + reservations)
+- ✅ Modèles Eloquent avec relations (13 modèles)
 - ✅ Frontend Vue.js 3 + Inertia.js
 - ✅ Gestion Sites (CRUD complet)
 - ✅ Gestion Boxes (CRUD complet avec calculs auto)
@@ -32,12 +32,12 @@ BoxManager est une plateforme SaaS multi-tenant complète destinée à la gestio
 - ✅ Seeders avec données de test (10 seeders)
 - ✅ Authentification multi-tenant (Laravel Breeze + Inertia)
 - ✅ Support multi-langue (FR, EN, NL avec vue-i18n)
-- ✅ **Système de notifications email automatisées**
+- ✅ **Système de notifications email automatisées** (5 types de notifications)
 - ✅ **Rappels de paiement automatiques** (J-7, J-3, J+1, J+3, J+7)
-- ✅ **Multi-devises** (6 devises européennes)
-- ✅ **TVA multi-pays** (18 pays européens)
-- ⏳ Réservation en ligne
-- ⏳ Paiement CB (Stripe)
+- ✅ **Multi-devises** (6 devises européennes avec conversions)
+- ✅ **TVA multi-pays** (18 pays européens avec calculs automatiques)
+- ✅ **Réservation en ligne** (système complet avec workflow de conversion)
+- ✅ **Paiement CB Stripe** (checkout sécurisé + webhooks + gestion complète)
 
 ### Phase 2 - Fonctionnalités avancées (Mois 5-8)
 - Multi-sites illimités
@@ -272,7 +272,95 @@ Une fois l'installation terminée, vous pouvez explorer :
 
 ## 📝 Changelog
 
-### [0.8.0] - 2025-11-16 (Current) ⭐ MAJEUR
+### [0.9.0] - 2025-11-16 (Current) 🎉 MVP PHASE 1 TERMINÉE
+
+**💳 Intégration Stripe Complète** ⭐ CRITIQUE
+- Configuration Stripe dans config/services.php (key, secret, webhook_secret)
+- StripeService avec méthodes:
+  - createPaymentIntent(): Création intentions de paiement
+  - createCustomer(): Gestion clients Stripe
+  - retrievePaymentIntent(): Vérification statut paiement
+- StripePaymentController (400+ lignes) avec:
+  - checkout(): Page paiement sécurisée
+  - createPaymentIntent(): Initialisation paiement
+  - confirmPayment(): Confirmation et enregistrement
+  - webhook(): Gestion événements Stripe (payment.succeeded, payment.failed, charge.refunded)
+  - handlePaymentIntentSucceeded(): Traitement paiements réussis
+  - handlePaymentIntentFailed(): Gestion échecs avec logs
+  - handleChargeRefunded(): Gestion remboursements
+- Routes Stripe:
+  - /stripe/webhook (public, sans auth)
+  - /client/invoices/{invoice}/checkout
+  - /client/invoices/{invoice}/payment-intent
+  - /client/payments/confirm
+- Migration add_stripe_customer_id_to_customers_table
+- Customer model: Ajout stripe_customer_id (fillable)
+- Checkout.vue (280+ lignes):
+  - Intégration Stripe Elements
+  - Formulaire carte sécurisé
+  - Gestion erreurs temps réel
+  - Récapitulatif commande avec TVA
+  - Support multi-devises
+  - Indicateurs de chargement
+- Traductions payment section (FR/EN/NL):
+  - secureCheckout, cardholderName, cardDetails, payNow, processing
+  - Messages erreur et confirmation
+
+**🎫 Système de Réservation en Ligne Complet** ⭐ CRITIQUE
+- Migration create_reservations_table:
+  - Informations client (first_name, last_name, email, phone)
+  - Détails réservation (desired_start_date, estimated_duration_months, notes)
+  - Workflow complet: pending → confirmed → converted/cancelled/expired
+  - Numéro unique auto-généré (RES-YYYY-XXXXX)
+  - Expiration automatique 48h
+  - Lien vers contrat après conversion
+- Modèle Reservation (190 lignes):
+  - Relations: tenant, site, box, contract
+  - Méthodes métier: confirm(), cancel(), expire(), convertToContract()
+  - Scopes: pending(), confirmed(), expired()
+  - Auto-génération reservation_number
+  - Attributs calculés: full_name, isExpired()
+- ReservationController (260+ lignes):
+  - Public:
+    - index(): Recherche boxes avec filtres (site, volume, prix, équipements)
+    - create(): Formulaire réservation pour un box
+    - store(): Validation et création réservation
+    - confirmation(): Page confirmation avec détails
+  - Admin:
+    - adminIndex(): Liste avec recherche et filtres
+    - adminShow(): Détails réservation
+    - confirm(): Validation réservation
+    - cancel(): Annulation avec raison
+    - convertToContract(): Conversion vers contrat
+    - expireOldReservations(): Cron expiration auto
+- Routes réservations:
+  - Public: /reservations, /reservations/boxes/{box}/reserve
+  - Admin: /admin/reservations/* (CRUD complet)
+- Recherche avancée:
+  - Par site, volume minimum, prix maximum
+  - Filtres équipements (électricité, climatisé, RDC)
+  - Vérification disponibilité temps réel
+  - Prévention double réservation
+
+**📊 Statistiques Mises à Jour**
+- 16 migrations totales (vs 13 en v0.8.0)
+- 13 modèles Eloquent (vs 12)
+- 30+ pages Vue (vs 27)
+- 3 services métier (StripeService, etc.)
+- 8 controllers complets
+- Support 6 devises européennes
+- Support 18 pays TVA
+- 5 types notifications email
+- Routes publiques + admin + client portal
+
+**🎯 MVP Phase 1: 100% COMPLÉTÉ** ✅🎉
+- Toutes les fonctionnalités de base implémentées
+- Différenciateurs européens en place (multi-devises, multi-TVA)
+- Système de paiement sécurisé opérationnel
+- Réservation en ligne fonctionnelle
+- Prêt pour le déploiement en production
+
+### [0.8.0] - 2025-11-16 ⭐ MAJEUR
 
 **🎯 Analyse Concurrentielle & Stratégie**
 - Recherche approfondie des concurrents SaaS (SiteLink, StorEDGE, Storeganise, etc.)
@@ -520,6 +608,6 @@ Ce projet est propriétaire. Tous droits réservés.
 
 ---
 
-**Version actuelle** : 0.8.0 (MVP Phase 1 - 98% complété) ⭐
+**Version actuelle** : 0.9.0 (MVP Phase 1 - 100% complété) 🎉✅
 **Date de dernière mise à jour** : 16 novembre 2025
-**Prochaines étapes** : Réservation en ligne + Intégration Stripe + Module Assurance
+**Prochaines étapes** : Module Assurance + Facturation récurrente + SEPA + Signature électronique

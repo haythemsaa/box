@@ -198,5 +198,26 @@
     "paid": "Paid",
     "unpaid": "Unpaid",
     "overdue": "Overdue"
+  },
+  "payment": {
+    "secureCheckout": "Secure Checkout",
+    "completePayment": "Complete your payment securely",
+    "orderSummary": "Order Summary",
+    "paymentMethod": "Payment Method",
+    "cardholderName": "Cardholder Name",
+    "cardDetails": "Card Details",
+    "payNow": "Pay {amount}",
+    "processing": "Processing...",
+    "securePaymentNotice": "Secure payment with SSL encryption. Your card information is never stored.",
+    "initializationError": "Error initializing payment. Please try again.",
+    "processingError": "Error processing payment. Please try again."
+  },
+  "invoices": {
+    "invoiceNumber": "Invoice Number",
+    "issueDate": "Issue Date",
+    "dueDate": "Due Date",
+    "subtotal": "Subtotal",
+    "vat": "VAT",
+    "total": "Total"
   }
 }

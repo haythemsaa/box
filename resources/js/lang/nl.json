@@ -198,5 +198,26 @@
     "paid": "Betaald",
     "unpaid": "Onbetaald",
     "overdue": "Achterstallig"
+  },
+  "payment": {
+    "secureCheckout": "Veilige Betaling",
+    "completePayment": "Voltooi uw betaling veilig",
+    "orderSummary": "Overzicht",
+    "paymentMethod": "Betaalmethode",
+    "cardholderName": "Naam Kaarthouder",
+    "cardDetails": "Kaartgegevens",
+    "payNow": "Betaal {amount}",
+    "processing": "Verwerken...",
+    "securePaymentNotice": "Veilige betaling met SSL-codering. Uw kaartgegevens worden nooit opgeslagen.",
+    "initializationError": "Fout bij het initialiseren van de betaling. Probeer het opnieuw.",
+    "processingError": "Fout bij het verwerken van de betaling. Probeer het opnieuw."
+  },
+  "invoices": {
+    "invoiceNumber": "Factuurnummer",
+    "issueDate": "Factuurdatum",
+    "dueDate": "Vervaldatum",
+    "subtotal": "Subtotaal",
+    "vat": "BTW",
+    "total": "Totaal"
   }
 }

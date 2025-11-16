@@ -7,6 +7,8 @@ use App\Http\Controllers\BoxController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\ClientPortalController;
+use App\Http\Controllers\StripePaymentController;
+use App\Http\Controllers\ReservationController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -24,6 +26,17 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
+});
+
+// Stripe webhook (must be outside auth middleware)
+Route::post('/stripe/webhook', [StripePaymentController::class, 'webhook'])->name('stripe.webhook');
+
+// Public Reservation Routes
+Route::prefix('reservations')->name('reservations.')->group(function () {
+    Route::get('/', [ReservationController::class, 'index'])->name('index');
+    Route::get('/boxes/{box}/reserve', [ReservationController::class, 'create'])->name('create');
+    Route::post('/boxes/{box}/reserve', [ReservationController::class, 'store'])->name('store');
+    Route::get('/{reservation}/confirmation', [ReservationController::class, 'confirmation'])->name('confirmation');
 });
 
 /*
@@ -47,6 +60,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Contracts Management
     Route::resource('contracts', ContractController::class);
+
+    // Reservations Management (Admin)
+    Route::prefix('admin/reservations')->name('admin.reservations.')->group(function () {
+        Route::get('/', [ReservationController::class, 'adminIndex'])->name('index');
+        Route::get('/{reservation}', [ReservationController::class, 'adminShow'])->name('show');
+        Route::post('/{reservation}/confirm', [ReservationController::class, 'confirm'])->name('confirm');
+        Route::post('/{reservation}/cancel', [ReservationController::class, 'cancel'])->name('cancel');
+        Route::post('/{reservation}/convert', [ReservationController::class, 'convertToContract'])->name('convert');
+    });
 
     // Profile Management
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -79,6 +101,11 @@ Route::middleware(['auth', 'verified'])->prefix('client')->name('client.')->grou
     // Profile
     Route::get('/profile', [ClientPortalController::class, 'profile'])->name('profile');
     Route::patch('/profile', [ClientPortalController::class, 'updateProfile'])->name('profile.update');
+
+    // Stripe Payments
+    Route::get('/invoices/{invoice}/checkout', [StripePaymentController::class, 'checkout'])->name('invoices.checkout');
+    Route::post('/invoices/{invoice}/payment-intent', [StripePaymentController::class, 'createPaymentIntent'])->name('invoices.payment-intent');
+    Route::post('/payments/confirm', [StripePaymentController::class, 'confirmPayment'])->name('payments.confirm');
 });
 
 require __DIR__.'/auth.php';
